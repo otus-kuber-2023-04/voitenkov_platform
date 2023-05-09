@@ -1,4 +1,4 @@
-# Инфраструктурная платформа на основе Kubernetes (курс компании OTUS)
+# Инфраструктурная платформа на основе Kubernetes
 
 ## Занятия
 
@@ -7,9 +7,9 @@
 ## 2. Знакомство с Kubernetes, основные понятия и архитектура (05.05.2023)
 ### Задание: 
 - Разберитесь почему все pod в namespace kube-system восстановились после удаления. Укажите причину в описании PR. Hint: core-dns и, например, kube-apiserver, имеют различия в механизме запуска и восстанавливаются по разным причинам. 
-- Выясните причину, по которой pod frontend находится в статусе **Error**
+- ⭐ Выясните причину, по которой pod frontend находится в статусе **Error**
 
-#### Полезные ссылки
+### Полезные ссылки
 
 - [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/) 
 - [minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/)
