@@ -13,7 +13,7 @@
  - Образ собран и отправлен в репозиторий [https://hub.docker.com/r/voitenkov/hipster-frontend](https://hub.docker.com/r/voitenkov/hipster-frontend) 
  - Написан манифест, под успешно задеплоен в Minikube
 ---
-### Решение Д/З №1
+## Решение ДЗ
 - Разберитесь почему все pod в namespace kube-system восстановились после удаления. Укажите причину в описании PR. Hint: core-dns и, например, kube-apiserver, имеют различия в механизме запуска и восстанавливаются по разным причинам:
 
 \
@@ -50,7 +50,7 @@ RollingUpdateStrategy:  1 max unavailable, 25% max surge
 ```sh
 panic: environment variable "PRODUCT_CATALOG_SERVICE_ADDR" not set
 ```
-
+---
 ## Как запустить проект:
 ### Web-сервер nginx:
  - Запустить команду **kubectl apply -f web-pod.yaml**
