@@ -88,4 +88,18 @@ kubectl --namespace kube-system delete pod --selector='k8s-app=kube-proxy'
 kubectl --namespace kube-system exec kube-proxy-mktfn kube-proxy --cleanup
 iptables-restore /tmp/iptables.cleanup
 
- minikube start --extra-config=kube-proxy.mode=ipvs --extra-config=kube-proxy.ipvs.strictARP=true
+minikube start --extra-config=kube-proxy.mode=ipvs --extra-config=kube-proxy.ipvs.strictARP=true
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+
+kubectl run dnsutils --image=tutum/dnsutils -- sleep infinity
+kubectl exec dnsutils -it -- /bin/bash
+
+wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml
+minikube addons enable ingress
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+ 
+
