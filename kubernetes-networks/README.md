@@ -41,7 +41,7 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/confi
 ```
 kubectl --namespace metallb-system get all
 ```
-Настройка балансировщика с помощью Custom Resoursec (ConfigMap deprecated):
+Настройка балансировщика с помощью Custom Resourses (ConfigMap deprecated):
 ```
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -87,7 +87,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingressnginx/maste
 - Kubernetes Dashboard должен быть развернут из официального манифеста. Актуальная ссылка есть в репозитории проекта
 - Написанные вами манифесты положите в подкаталог ./dashboard
 
-#### ⭐ | Canary для Ingress - НЕ ВЫПОЛНЕНО 
+#### ⭐ Canary для Ingress - НЕ ВЫПОЛНЕНО 
 Реализуйте канареечное развертывание с помощью ingress-nginx:
 - Перенаправление части трафика на выделенную группу подов должно происходить по HTTP-заголовку.
 
