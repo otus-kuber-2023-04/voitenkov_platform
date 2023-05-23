@@ -15,13 +15,13 @@ minio-statefulset.yaml
 В результате применения конфигурации должно произойти следующее:
 - Запуститься под с MinIO
 - Создаться PVC
-- Динамически создаться PV на этом PVC с помощью дефолотного StorageClass
+- Динамически создаться PV на этом PVC с помощью дефолтного StorageClass
 
 Для того, чтобы наш StatefulSet был доступен изнутри кластера, создадим Headless Service - minio-headlessservice.yaml 
 
 #### ⭐ В конфигурации нашего StatefulSet данные указаны в открытом виде, что не безопасно. Поместите данные в secrets и настройте конфигурацию на их использование.
 - файл secret.yaml
-- плюс исравленный файл minio-statefulset.yaml
+- плюс исправленный файл minio-statefulset.yaml
 
 ## Как запустить проект:
  - Запустить команду **kubectl apply -f kubernetes-volumes**
