@@ -3,7 +3,7 @@
  - [x] Основное ДЗ
  - [x] Задание 1 со *
  - [x] Задание 2 co *
- - [ ] Задание 3 co *
+ - [x] Задание 3 co *
 
 ## В процессе сделано:
 
@@ -81,6 +81,8 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingressnginx/maste
 #### Создание правил Ingress
 Получаем манифест - web-ingress.yaml 
 
+![web-ingress](/images/hw04-ingress-nginx.png) 
+
 #### ⭐ Ingress для Dashboard  
 - Добавьте доступ к kubernetes-dashboard через наш Ingress-прокси:
 - Cервис должен быть доступен через префикс /dashboard ).
@@ -145,11 +147,27 @@ NAME                                DESIRED   CURRENT   READY   AGE
 replicaset.apps/canary-8656446cfd   3         3         0       57s
 replicaset.apps/web-56848597f5      3         3         3       179m
 
-
+$ k describe ingress canary
+Name:             canary
+Labels:           <none>
+Namespace:        default
+Address:          172.18.0.2
+Ingress Class:    nginx
+Default backend:  <default>
+Rules:
+  Host        Path  Backends
+  ----        ----  --------
+  *
+              /web   canary-svc:8000 ()
+Annotations:  nginx.ingress.kubernetes.io/canary: true
+              nginx.ingress.kubernetes.io/canary-by-header-value: canary
+              nginx.ingress.kubernetes.io/rewrite-target: /
+Events:
+  Type    Reason  Age                From                      Message
+  ----    ------  ----               ----                      -------
+  Normal  Sync    35s (x2 over 61s)  nginx-ingress-controller  Scheduled for sync
 
 ```
-
-
 
 ### Как проверить работоспособность:
 
