@@ -2,7 +2,7 @@
 
  - [x] Основное ДЗ
  - [x] Задание 1 со *
- - [ ] Задание 2 co *
+ - [x] Задание 2 co *
  - [ ] Задание 3 co *
 
 ## В процессе сделано:
@@ -81,19 +81,75 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingressnginx/maste
 #### Создание правил Ingress
 Получаем манифест - web-ingress.yaml 
 
-#### ⭐ Ingress для Dashboard - НЕ ВЫПОЛНЕНО 
+#### ⭐ Ingress для Dashboard  
 - Добавьте доступ к kubernetes-dashboard через наш Ingress-прокси:
 - Cервис должен быть доступен через префикс /dashboard ).
 - Kubernetes Dashboard должен быть развернут из официального манифеста. Актуальная ссылка есть в репозитории проекта
 - Написанные вами манифесты положите в подкаталог ./dashboard
 
-#### ⭐ Canary для Ingress - НЕ ВЫПОЛНЕНО 
+```bash
+$ k describe ingress -n kubernetes-dashboard
+Name:             dashboard
+Labels:           <none>
+Namespace:        kubernetes-dashboard
+Address:          172.18.0.2
+Ingress Class:    nginx
+Default backend:  <default>
+Rules:
+  Host        Path  Backends
+  ----        ----  --------
+  *
+              /   kubernetes-dashboard:8443 (10.244.0.12:8443)
+Annotations:  nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+              nginx.ingress.kubernetes.io/rewrite-target: /
+Events:
+  Type    Reason  Age                From                      Message
+  ----    ------  ----               ----                      -------
+  Normal  Sync    41m (x7 over 61m)  nginx-ingress-controller  Scheduled for sync
+```
+
+![Dashboard](/images/hw04-dashboard.png)  
+
+
+
+#### ⭐ Canary для Ingress
 Реализуйте канареечное развертывание с помощью ingress-nginx:
 - Перенаправление части трафика на выделенную группу подов должно происходить по HTTP-заголовку.
 
 Документация [тут](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md#canary)
 - Естественно, что вам понадобятся 1-2 "канареечных" пода.
 - Написанные манифесты положите в подкаталог ./canary
+
+```bash
+$ k get all
+NAME                          READY   STATUS    RESTARTS      AGE
+pod/canary-8656446cfd-9sxpd   0/1     Running   1 (26s ago)   57s
+pod/canary-8656446cfd-px2h8   0/1     Running   1 (26s ago)   57s
+pod/canary-8656446cfd-rvlzv   0/1     Running   1 (26s ago)   57s
+pod/web-56848597f5-9dj9h      1/1     Running   0             179m
+pod/web-56848597f5-qwkrs      1/1     Running   0             179m
+pod/web-56848597f5-xxl2n      1/1     Running   0             179m
+
+NAME                  TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+service/canary-svc    ClusterIP      None            <none>         80/TCP         29s
+service/kubernetes    ClusterIP      10.96.0.1       <none>         443/TCP        3h
+service/web-svc       ClusterIP      None            <none>         80/TCP         128m
+service/web-svc-cip   ClusterIP      10.96.192.95    <none>         80/TCP         176m
+service/web-svc-lb    LoadBalancer   10.96.191.183   172.17.255.1   80:30261/TCP   156m
+
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/canary   0/3     3            0           57s
+deployment.apps/web      3/3     3            3           179m
+
+NAME                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/canary-8656446cfd   3         3         0       57s
+replicaset.apps/web-56848597f5      3         3         3       179m
+
+
+
+```
+
+
 
 ### Как проверить работоспособность:
 
