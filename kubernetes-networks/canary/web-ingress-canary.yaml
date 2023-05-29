@@ -5,6 +5,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-by-header: "release"
     nginx.ingress.kubernetes.io/canary-by-header-value: "canary"
 spec:
   ingressClassName: nginx

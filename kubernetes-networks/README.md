@@ -160,6 +160,7 @@ Rules:
   *
               /web   canary-svc:8000 ()
 Annotations:  nginx.ingress.kubernetes.io/canary: true
+              nginx.ingress.kubernetes.io/canary-by-header: release
               nginx.ingress.kubernetes.io/canary-by-header-value: canary
               nginx.ingress.kubernetes.io/rewrite-target: /
 Events:
