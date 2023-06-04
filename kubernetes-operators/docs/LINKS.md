@@ -1,0 +1,16 @@
+# Полезные ссылки:
+- [DevOps and Cloud InfoQ Trends Report](https://www.infoq.com/articles/devops-cloud-trends-2019/)
+- [Optimizing software team interactions for flow](https://teamtopologies.com/)
+- [Bare-metal considerations](https://kubernetes.github.io/ingress-nginx/deploy/baremetal/)
+- [How to Scale DevOps by Building Platform Teams](https://www.gartner.com/en/documents/3906678/how-to-scale-devops-by-building-platform-teams)
+- [How Docs Handle Third Party and Dual Sourced Content - Электронный ресурс/Zach Corleissen. — Электрон. текстовые дан. — 2020](https://kubernetes.io/blog/)
+- [Production-Grade Container Orchestration](https://kubernetes.io/)
+- [Обзор и список на официальном сайте](https://kubernetes.io/docs/concepts/cluster-administration/addons/)
+- [YAML Lint](http://www.yamllint.com/)
+- [YAML Ain’t Markup Language (YAML™️) Version 1.2](https://yaml.org/spec/1.2/spec.html)
+- [How to migrate from Helm v2 to Helm v3](https://helm.sh/blog/migrate-from-helm-v2-to-helm-v3/)
+- [Дважды подумайте, прежде чем использовать Helm](https://habr.com/ru/company/southbridge/blog/429340/)
+- [Трезвый взгляд на Helm 2: «Вот такой, какой есть...»](https://habr.com/ru/company/flant/blog/438814/)
+- [angular-architecture-graph@0.2.4](https://snyk.io/test/npm/angular-architecture-graph?severity=high&severity=medium&severity=low&policy=open)
+- [The Chart Best Practices Guide](https://helm.sh/docs/chart_best_practices/)
+- Kubernetes в действии /Лукша Марко. — ДМК-Пресс, 2019. — 672с./
