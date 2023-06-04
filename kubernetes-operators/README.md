@@ -82,7 +82,7 @@ $ kopf run mysql-operator.py
 [2023-06-01 16:20:52,725] kopf.objects         [INFO    ] [default/mysql-instance] Creation is processed: 1 succeeded; 0 failed.
 ```
 
-##### Деплой оператора 
+### Деплой оператора 
 Создаем в папке kubernetes-operator/deploy манифесты и применяем их:
 + service-account.yml
 + role.yml
