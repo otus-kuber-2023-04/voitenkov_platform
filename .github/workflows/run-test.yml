@@ -2,9 +2,9 @@ name: Run tests for OTUS homework
 
 on:
   push:
-    branches: kubernetes-*
-#  pull_request:
-#    branches: kubernetes-*
+    branches: kubernetes-dummy*
+  pull_request:
+    branches: kubernetes-dummy*
 
 jobs:
   test:
