@@ -19,8 +19,8 @@ kubernetes-logging:
 kubernetes-monitoring:
   - kubernetes-monitoring/*
   
-kubernetes-networks:
-  - kubernetes-networks/*
+#kubernetes-networks:
+#  - kubernetes-networks/*
   
 kubernetes-operators:
   - kubernetes-operators/*
