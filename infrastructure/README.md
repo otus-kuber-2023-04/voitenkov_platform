@@ -99,7 +99,7 @@ Pls run following commands (Windows cmd commands will be used as examples, for L
 6. Open _infrastructure/1-organization/main.tf_ file and replace **cloud_organization_id** and **cloud_billing_account_id** with values from your YC account.
 7. terraform apply
 
-**organization** and **momo-store** clouds will be created. **adm-folder** and Object storage for Terraform state file will be created in both clouds. Pls open _infrastructure/1-organization/terraform.tfstate_, find 
+**organization** and **otus-kuber** clouds will be created. **adm-folder** and Object storage for Terraform state file will be created in both clouds. Pls open _infrastructure/1-organization/terraform.tfstate_, find 
 ```
 "module": "module.organization-cloud",
 "mode": "managed",
@@ -112,7 +112,7 @@ Pls run following commands (Windows cmd commands will be used as examples, for L
 ```
 and
 ```
-"module": "module.momo-cloud",
+"module": "module.otus-kuber",
 "mode": "managed",
 "type": "yandex_storage_bucket",
 "name": "s3-tfstate",
@@ -131,7 +131,7 @@ $Env:AWS_SECRET_ACCESS_KEY = "<secret_key from module.organization-cloud>"
 [Environment]::SetEnvironmentVariable('AWS_SECRET_ACCESS_KEY', $Env:AWS_SECRET_ACCESS_KEY, 'User')  
 ```
 
-You may also create another **secrets.ps1** with access and secret keys with values from **module.momo-cloud** section of **terraform.tfstate** file to provide it for the person engaged in creation of folders in momo-store cloud (_/infrastructure/2-cloud - Cloud level Terraform project_).
+You may also create another **secrets.ps1** with access and secret keys with values from **module.otus-kuber** section of **terraform.tfstate** file to provide it for the person engaged in creation of folders in momo-store cloud (_/infrastructure/2-cloud - Cloud level Terraform project_).
 
 8. **.\secrets.ps1** # to set environment variables with **access key** and **secret key**, to access to **organization** cloud S3 backend for Terraform state file in adm-folder.
 9. **copy versions.s3 versions.tf**
