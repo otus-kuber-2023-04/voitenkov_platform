@@ -2,7 +2,7 @@
 
 ## About the Project
 
-This repository was developed to provide examples of how to build and support GitOps process based on Argo CD.
+This repository was developed to provide examples of how to deploy Kubernetes infrastructure platform (within OTUS learning course) to Yandex Cloud.
 
 Organization structure and IAM have been taken _with some simplifications_ from Yandex Cloud reference design.
 Pls see (https://github.com/yandex-cloud/yc-solution-library-for-security/blob/master/auth_and_access/org_iac_iam/README.md)
@@ -10,13 +10,13 @@ Pls see (https://github.com/yandex-cloud/yc-solution-library-for-security/blob/m
 Organization structure consists of 3 clouds in Yandex Cloud organization account:
 - default cloud (to bootstrap next organization entities)
 - organization (to manage project clouds)
-- momo-store (for momo store Dev and Prod environments)
+- otus-kuber (for Development and Production environments)
 
 Default cloud has at least one initial Default folder.
 
 Organization cloud has only one adm-folder with object storage to store Organization level Terraform state.
 
-Momo-store cloud has 3 folders:
+Otus-kuber cloud has 3 folders:
 - adm-folder (with object storage to store Cloud level Terraform state)
 - dev-folder (for Development environment)
 - prod-folder (for Production environment)
@@ -53,31 +53,7 @@ infrastructure
 │   ├── activate-alb.ps1 - script (Windows) to create service account key to access Yandex Cloud Container Registry
 │   ├── activate-alb.sh - script (Linux) to install YC ALB ingress controller Helm chart
 │   ├── ... - files related to Terraform project
-├── charts - Helm charts to deploy applications in Kubernetes
-│   ├── apps - App of Apps chart
-│   │   ├── templates - child applications templates
-│   │   │   ├── alb.yaml - for YC ALB ingress controller
-│   │   │   ├── momo-app.yaml - for Momo Store main applications set
-│   │   │   ├── momo-monitoring.yaml - for Momo Store monitoring applications set
-│   ├── argo-cd - Argo CD chart
-│   ├── momo-app - Momo Store main applications set chart
-│   │   ├── charts - subcharts
-│   │   │   ├── backend - for backend application
-│   │   │   ├── frontend - for frontend application
-│   │   ├── templates
-│   │   │   ├── dockerlogin.yaml - Project container registry credentials (encrypted by Helm Secrets/SOPS)
-│   ├── momo-monitoring - Momo Store monitoring applications set chart
-│   │   ├── charts - subcharts
-│   │   │   ├── alertmanager - for alertmanager application
-│   │   │   ├── grafana - for grafana application
-│   │   │   ├── prometheus - for prometheus application
-│   │   │   ├── prometheus-nginx-exporter - for prometheus-nginx-exporter application
-│   ├── yc-alb - YC ALB ingress controller chart
 ├── images - application images to upload to YC S3 object storage
-├── manifests - manifests to test Momo Store application in Kubernetes 
-│   ├── backend - for backend application
-│   ├── frontend - for frontend application
-│   ├── init - manifests for initial Kubernetes environment configuration
 ├── modules - common Terraform modules to use in Terraform projects
 │   ├── bucket - for YC object sorage
 │   ├── cloud - for YC cloud resourse 
@@ -88,17 +64,11 @@ infrastructure
 │   ├── sa - for YC service account
 │   ├── subnet - for YC VPC subnet
 ├── templates - cloud-init userdata templates to use in instances deploymnet
-├── values - values files for main and app of apps child applications, files with sensitive data are encrypted by Helm Secrets/SOPS
-    ├── alb.yaml - for YC ALB ingress controller
-    ├── apps.yaml - for App of Apps
-    ├── argocd.yaml - for Argo CD 
-    ├── momo-app.yaml - for Momo Store main applications set
-    ├── momo-monitoring.yaml - for Momo Store monitoring applications set
 ```
 
 ## Installation Instructions
 
-These instructions demonstrate how to deploy Momo Store infrastructure into Yandex.Cloud.
+These instructions demonstrate how to deploy Kubernetes infrastructure platform into Yandex.Cloud.
 
 **To be performed from your Windows or Linux personal computer**
 
