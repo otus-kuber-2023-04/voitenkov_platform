@@ -53,7 +53,7 @@ infrastructure
 │   ├── activate-alb.ps1 - script (Windows) to create service account key to access Yandex Cloud Container Registry
 │   ├── activate-alb.sh - script (Linux) to install YC ALB ingress controller Helm chart
 │   ├── ... - files related to Terraform project
-├── images - application images to upload to YC S3 object storage
+├── images - some images
 ├── modules - common Terraform modules to use in Terraform projects
 │   ├── bucket - for YC object sorage
 │   ├── cloud - for YC cloud resourse 
