@@ -28,7 +28,7 @@ Each of 4 Terraform state could be managed by 4 different admins:
 - Production folder admin
 
 
-![Reference](./images/momo-store.jpg)
+![Reference](./images/yandex-cloud.png)
 
 ## Getting Started
 
