@@ -156,9 +156,9 @@ Pls run following commands:
 ###  Deploy Development Environment (Terraform)
 
 Pls run following commands. All terraform resourses can be created and modified **only** within **dev-folder** due to restricted permissions of YC service account used for Terraform provider:
-1. **cd momo-store\infrastructure\3-development**
-2. **.\activate-yc-profile.ps1** # to create (activate) **momo-dev** yc profile and set environment variables with **cloud-id** and **folder-id**.
-3. **.\secrets.ps1** # to set environment variables with **access key** and **secret key**, provided to access to **momo-store** cloud S3 backend for Terraform state file in **dev-folder**.
+1. **cd infrastructure\3-development**
+2. **.\activate-yc-profile.ps1** # to create (activate) **otus-kuber-dev** yc profile and set environment variables with **cloud-id** and **folder-id**.
+3. **.\secrets.ps1** # to set environment variables with **access key** and **secret key**, provided to access to **otus-kuber** cloud S3 backend for Terraform state file in **dev-folder**.
 
 copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\3-development\secrets\devops1. It will be copied to development DevOps engineer instance. In case of several DevOps engineers, pls create devops2, devops3 and so on folders with relevant key files.
 Also **count** value in module **"devops-instance"** in **main.tf** should be changed to number of created instances.
@@ -171,131 +171,13 @@ Also **count** value in module **"devops-instance"** in **main.tf** should be ch
 ###  Deploy Production Environment (Terraform)
 
 Pls run following commands. All terraform resourses can be created and modified **only** within **prod-folder** due to restricted permissions of YC service account used for Terraform provider:
-1. **cd momo-store\infrastructure\4-production**
-2. **.\activate-yc-profile.ps1** # to create (activate) **momo-prod** yc profile and set environment variables with **cloud-id** and **folder-id**.
-3. **.\secrets.ps1** # to set environment variables with **access key** and **secret key**, provided to access to **momo-store** cloud S3 backend for Terraform state file in **dev-folder**.
+1. **cd infrastructure\4-production**
+2. **.\activate-yc-profile.ps1** # to create (activate) **otus-kuber-prod** yc profile and set environment variables with **cloud-id** and **folder-id**.
+3. **.\secrets.ps1** # to set environment variables with **access key** and **secret key**, provided to access to **otus-kuber** cloud S3 backend for Terraform state file in **dev-folder**.
 
 copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\4-production\secrets\devops1. It will be copied to Kubernetes cluster worker nodes to access them via SSH. In case of several DevOps engineers only one SSH key could be added for user **devops1**.
 
 4. **terraform init**
 5. **terraform apply**
 
-Kubernetes cluster with group of 2 worker nodes will be created, as well as all necessary networks, subnets, service accounts, security groups and wildcard SSL-certificate for *.momo.voytenkov.ru registered domain. Also S3 object storage with web-site images will be created.
-IP address for YC ALB ingress controller will be also created with name **ip-momo-store-prod-k8s-alb**. You can get it from Yandex Cloud web-console or **yc cli**. Pls also save following ID's. You may run following commands to get IDs to be replaced in Kubernetes ingresses annotations:
-
-6. **yc vpc address get ip-momo-store-prod-k8s-alb** # to get static IP address to be used by YC ALB ingress controller and Kubernetes ingresses. 
-
-7. **yc vpc subnet get subnet-momo-store-prod-a1** # to get subnet ID for Kubernetes ingresses.
-
-To get security groups IDs for Kubernetes ingresses.
-
-8. **yc vpc security-group get sg-momo-store-prod-k8s-main** 
-9. **yc vpc security-group get sg-momo-store-prod-k8s-alb**
-10. **yc cm certificate get cert-momo-store-prod-momo-voytenkov-ru** # to get cetificate ID for Kubernetes ingresses.
-
-Pls ask admin of DNS server for voytenkov.ru zone to create (or modify) following DNS-records:
-
-```
-.momo.voytenkov.ru. 600 A <IP address>
-_acme-challenge.momo.voytenkov.ru. 600 CNAME <certificate ID>.cm.yandexcloud.net.
-```
-
-Pls note that some time is need to issue Let's Encrypt certificate. When status of certificate will change to ISSUED, you may proceed with next steps. You can get certificate status in Yandex Cloud web console or with the command **yc cm certificate get cert-momo-store-prod-momo-voytenkov-ru**.
-
-
-###  Deploy and Configure Argocd (Helm)
-
-Argo CD follows the GitOps pattern of using Git repositories as the source of truth for defining the desired application state. 
-
-
-Token and GitLab repository URL for ArgoCD to access to GitLab repository is stored in ./values/argocd.yaml encrypted by **Helm Secrets/SOPS**. 
-Pls ask **age** private key (**key.txt**) and public key to decrypt/encrypt value files with sensitive data. Upload **key.txt** to user home folder.
-
-Pls run following commands in **DevOps** instance:
-1. **git clone git@gitlab.praktikum-services.ru:std-010-065/momo-store.git**
-2. **cd momo-store/infrastructure**
-3. **yc managed-kubernetes cluster get-credentials k8s-momo-store-prod-cluster-1 --external**
-4. **kubectl apply -f manifests/init** # to create namespaces momo-app and argocd and 
-5. **echo 'export SOPS_AGE_KEY_FILE=~/key.txt' >> ~/.bashrc**
-6. **echo 'export SOPS_AGE_RECIPIENTS=age public key' >> ~/.bashrc**
-7. **source ~/.bashrc**
-8. **kubectl -n argocd create secret generic helm-secrets-private-keys --from-file=~/key.txt**
-
-Decrypt encrypted value files with ingress annotations to be replaced with new values.
-
-9. **helm secrets dec values/argocd.yaml**
-10. **helm secrets dec values/momo-app.yaml**
-11. **helm secrets dec values/momo-monitoring.yaml**
-
-Replace values/argocd.yaml.dec, values/momo-app.yaml.dec, values/momo-monitoring.yaml files with updated values:
-```
- secretName: yc-certmgr-cert-id-<id of cert-momo-store-prod-momo-voytenkov-ru>
- subnets: <id of subnet-momo-store-prod-a1>
- external_ipv4_address: <IP of ip-momo-store-prod-k8s-alb> 
- security_groups: <ID of sg-momo-store-prod-k8s-alb>,<ID of sg-momo-store-prod-k8s-main>
-```
-
-Encrypt value files.
-
-9. **helm secrets enc values/argocd.yaml**
-10. **helm secrets enc values/momo-app.yaml**
-11. **helm secrets enc values/momo-monitoring.yaml**
-12. **helm secrets clean .** # to delete decrypted files with sensitive data
-13. **cd ..**
-14. **git add .**
-15. **git commit -m "ingress annotations updated"**
-16. **git push**
-17. **helm secrets install -n argocd argocd charts/argo-cd -f values/argocd.yaml**
-18. **kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo** # to get ArgoCD Admin user password
-19. **kubectl port-forward svc/argocd-server -n argocd 8080:443** # to temporary get access to ArgoCD web-interface via http://localhost:8080
-
-
-###  Deploy Argocd App of Apps (Auto)
-
-**App of Apps** will be used to deploy other Kubernetes applications via child subcharts, initial deployment and upgrades will be started automatically by ArgoCD after child applicatios charts pushed or changes commited to GitLab repository.
-Pls see [App of Apps](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/) for details.
-
-**App of Apps** will be automatically deployed in Kubernetes with custom Argo CD Helm chart.
-
-![Reference](./images/app-of-apps.jpg)
-
-###  Deploy App of Apps Child Applications (Auto)
-
-Following applications will be automatically deployed in Kubernetes by **App of Apps** as references to their charts and values are stated in **App of Apps** configuration files:
-
-1. Momo App:
-  - Backend
-  - Frontend
-2. Momo Monitoring:
-  - Alertmanager
-  - Grafana
-  - Prometheus
-  - Prometheus-Nginx-Exporter
-3. YC ALB Ingress Controller
-
-###  Switch on Ingress in ArgoCD (Helm)
-
-Nevertheless ingress is configured in ArgoCD values, you need to apply values/argocd.yaml once again, because Ingress Controller has been deployed after initial installation of ArgoCD helm chart:
-
-Pls check that YC ALB ingress controller has been installed and run following commands in **DevOps** instance:
-1. **helm secrets install -n argocd argocd charts/argo-cd -f values/argocd.yaml**
-
-###  Web-access to Deployed Applications
-
-Momo Store application: [https://store.momo.voytenkov.ru](https://store.momo.voytenkov.ru)
-
-ArgoCD: [https://argocd.momo.voytenkov.ru](https://argocd.momo.voytenkov.ru)
-
-Alertmanager: [https://alertmanager.momo.voytenkov.ru](https://alertmanager.momo.voytenkov.ru)
-
-Grafana: [https://grafana.momo.voytenkov.ru](https://grafana.momo.voytenkov.ru)
-
-Prometheus: [https://prometheus.momo.voytenkov.ru](https://prometheus.momo.voytenkov.ru)
-
-
-###  Momo Store Application Monitoring
-
-Pls use Grafana dashbords for Nginx web-server monitoring used by Momo Store application. Initial password for Admin user is admin.
-
-![Reference](./images/grafana.jpg)
-
+Kubernetes cluster with group of worker nodes will be created, as well as all necessary networks, subnets, service accounts and security groups.
