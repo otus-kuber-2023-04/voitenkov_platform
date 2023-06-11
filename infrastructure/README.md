@@ -184,6 +184,6 @@ Kubernetes cluster with group of worker nodes will be created, as well as all ne
 
 ### Connect to Managed Kubernetes Cluster in Yandex Cloud
 
-To get credentials for Kubernetes Cluster in Development environment pls run following command from outside Yandex Cloud network:
+To get credentials for Kubernetes Cluster in Development environment from outside Yandex Cloud network pls run following command:
 
 **yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-dev-cluster-1 --external**
