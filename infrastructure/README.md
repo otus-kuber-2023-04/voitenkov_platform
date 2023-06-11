@@ -186,4 +186,4 @@ Kubernetes cluster with group of worker nodes will be created, as well as all ne
 
 To get credentials for Kubernetes Cluster in Development environment pls run following command:
 
-** yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-dev-cluster-1 --external **
+**yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-dev-cluster-1 --external**
