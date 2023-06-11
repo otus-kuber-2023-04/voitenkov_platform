@@ -151,7 +151,7 @@ module "c1-k8s-cluster" {
   k8s_cluster_project                   = var.project
   k8s_cluster_environment               = var.environment
   k8s_cluster_network_id                = yandex_vpc_network.network-otus-kuber-dev.id
-  k8s_cluster_version                   = "1.23"
+  k8s_cluster_version                   = "1.24"
   k8s_cluster_subnet_id                 = module.a1-subnet.id
   k8s_cluster_public_ip                 = true
   k8s_cluster_security_group_ids        = [
@@ -177,10 +177,10 @@ module "n1-k8s-node-group" {
   k8s_node_group_environment        = var.environment
   k8s_node_group_cluster            = "cluster-1"
   k8s_node_group_cluster_id         = module.c1-k8s-cluster.id
-  k8s_node_group_version            = "1.23"
+  k8s_node_group_version            = "1.24"
   k8s_node_group_auto_scale_max     = 5
   k8s_node_group_preemptible        = true
-  k8s_node_group_nat                = true
+#  k8s_node_group_nat                = true
   k8s_node_group_subnet_ids         = [module.a1-subnet.id]
   k8s_node_group_security_group_ids = [
     yandex_vpc_security_group.sg-otus-kuber-dev-k8s-main.id,
@@ -188,7 +188,7 @@ module "n1-k8s-node-group" {
     yandex_vpc_security_group.sg-otus-kuber-dev-k8s-public-services.id
   ]
   k8s_node_group_username           = "devops1"
-  k8s_node_group_ssh_public_key     = file("./secrets/devops1/id_rsa.pub")
+  k8s_node_group_ssh_public_key     = file("./.secrets/devops1/id_rsa.pub")
  
   depends_on = [
     module.c1-k8s-cluster,

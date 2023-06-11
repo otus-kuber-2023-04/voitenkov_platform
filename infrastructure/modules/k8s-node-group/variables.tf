@@ -36,13 +36,13 @@ variable "k8s_node_group_version" {
 variable "k8s_node_group_auto_scale_initial" {
   type        = number
   description = "K8s node auto scale initial number of instances"
-  default     = 1
+  default     = 0
 }
 
 variable "k8s_node_group_auto_scale_min" {
   type        = number
   description = "K8s node auto scale minimum number of instances"
-  default     = 1
+  default     = 0
 }
 
 variable "k8s_node_group_auto_scale_max" {
@@ -109,13 +109,6 @@ variable "k8s_node_group_nat" {
 variable "k8s_node_group_subnet_ids" {
   type        = list
   description = "K8s node group network interface subnet IDs"
-  nullable    = false
-}
-
-variable "k8s_node_group_public_ip" {
-  type        = bool
-  description = "K8s node group public IP"
-  default     = false
   nullable    = false
 }
 
