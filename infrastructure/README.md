@@ -213,8 +213,13 @@ Pls ask admin of DNS server for voytenkov.ru zone to create (or modify) followin
 .otus-kuber.voytenkov.ru. 600 A <ip-otus-kuber-prod-k8s-ingress>
 ```
 
-### Connect to Managed Kubernetes Cluster in Yandex Cloud
+### Connect to Managed Kubernetes Clusters in Yandex Cloud
 
 To get credentials for Kubernetes Cluster in Development environment from outside Yandex Cloud network pls run following command:
 
 **yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-dev-cluster-1 --external**
+
+To get credentials for Kubernetes Cluster in Production environment from outside Yandex Cloud network pls run following command:
+
+**yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-prod-cluster-1 --external**
+
