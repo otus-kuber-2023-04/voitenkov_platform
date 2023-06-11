@@ -166,24 +166,21 @@ Also **count** value in module **"devops-instance"** in **main.tf** should be ch
 4. **terraform init**
 5. **terraform apply**
 
-**DevOps** instances with all tools to deploy infrastructure in Kubernetes will be created, as well as all networks, subnets, service accounts and security groups. You can get **DevOps** instance IP address from Yandex Cloud web-console or from Terraform output **external_ip_address**.
+Following Yandex Cloud resources will be created:
+1. **DevOps** instances with all tools to deploy infrastructure in Kubernetes. You can get **DevOps** instance IP address from Yandex Cloud web-console or from Terraform output **external_ip_address**.
+2. Development Kubernetes cluster with group of worker nodes, as well as all necessary networks, subnets, service accounts and security groups. 
+3. Public IP address for ingress controller.
+4. DNS Zone for voytenkov.ru domain.
+5. DNS record type A "*.k8s-dev.voytenkov.ru." pointing to IP address for ingress controller.
 
-Kubernetes cluster with group of worker nodes will be created, as well as all necessary networks, subnets, service accounts and security groups. IP address for ingress controller will be also created with name **ip-otus-kuber-dev-k8s-ingress**. You can get it from Yandex Cloud web-console or **yc cli**. Pls also save following ID's. You may run following commands to get IDs to be replaced in Kubernetes ingresses annotations:
+You may run following commands to get IDs to be replaced in Kubernetes ingresses annotations:
 
-6. **yc vpc address get ip-otus-kuber-dev-k8s-ingress** # to get static IP address to be used by ingress controller and Kubernetes ingresses. 
-
-7. **yc vpc subnet get subnet-otus-kuber-dev-a1** # to get subnet ID for Kubernetes ingresses.
+1. **yc vpc address get ip-otus-kuber-dev-k8s-ingress** # to get static IP address to be used by ingress controller and Kubernetes ingresses. 
+2. **yc vpc subnet get subnet-otus-kuber-dev-a1** # to get subnet ID for Kubernetes ingresses.
 
 To get security groups IDs for Kubernetes ingresses.
 
-8. **yc vpc security-group get sg-otus-kuber-dev-k8s-ingress** 
-
-Pls ask admin of DNS server for voytenkov.ru zone to create (or modify) following DNS-records:
-
-```
-.otus-kuber.voytenkov.ru. 600 A <ip-otus-kuber-dev-k8s-ingress>
-```
-
+3. **yc vpc security-group get sg-otus-kuber-dev-k8s-ingress** 
 
 ###  Deploy Production Environment (Terraform)
 
@@ -197,21 +194,21 @@ copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\4-prod
 4. **terraform init**
 5. **terraform apply**
 
-Kubernetes cluster with group of worker nodes will be created, as well as all necessary networks, subnets, service accounts and security groups. IP address for ingress controller will be also created with name **ip-otus-kuber-prod-k8s-ingress**. You can get it from Yandex Cloud web-console or **yc cli**. Pls also save following ID's. You may run following commands to get IDs to be replaced in Kubernetes ingresses annotations:
+Following Yandex Cloud resources will be created:
+1. Production Kubernetes cluster with group of worker nodes, as well as all necessary networks, subnets, service accounts and security groups. 
+2. Public IP address for ingress controller.
+3. DNS Zone for voytenkov.ru domain.
+4. DNS record type A "*.k8s.voytenkov.ru." pointing to IP address for ingress controller.
 
-6. **yc vpc address get ip-otus-kuber-prod-k8s-ingress** # to get static IP address to be used by ingress controller and Kubernetes ingresses. 
+You may run following commands to get IDs to be replaced in Kubernetes ingresses annotations:
 
-7. **yc vpc subnet get subnet-otus-kuber-prod-a1** # to get subnet ID for Kubernetes ingresses.
+1. **yc vpc address get ip-otus-kuber-prod-k8s-ingress** # to get static IP address to be used by ingress controller and Kubernetes ingresses. 
+2. **yc vpc subnet get subnet-otus-kuber-prod-a1** # to get subnet ID for Kubernetes ingresses.
 
 To get security groups IDs for Kubernetes ingresses.
 
-8. **yc vpc security-group get sg-otus-kuber-prod-k8s-ingress** 
+3. **yc vpc security-group get sg-otus-kuber-prod-k8s-ingress** 
 
-Pls ask admin of DNS server for voytenkov.ru zone to create (or modify) following DNS-records:
-
-```
-.otus-kuber.voytenkov.ru. 600 A <ip-otus-kuber-prod-k8s-ingress>
-```
 
 ### Connect to Managed Kubernetes Clusters in Yandex Cloud
 
