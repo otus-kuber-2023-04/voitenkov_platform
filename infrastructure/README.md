@@ -181,3 +181,9 @@ copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\4-prod
 5. **terraform apply**
 
 Kubernetes cluster with group of worker nodes will be created, as well as all necessary networks, subnets, service accounts and security groups.
+
+### Connect to Managed Kubernetes Cluster in Yandex Cloud
+
+To get credentials for Kubernetes Cluster in Development environment pls run following command:
+
+** yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-dev-cluster-1 --external **
