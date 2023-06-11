@@ -10,9 +10,9 @@ terraform {
 
   backend "s3" {
     endpoint                    = "storage.yandexcloud.net"
-    bucket                      = "s3-momo-store-adm-tfstate"
+    bucket                      = "s3-otus-kuber-adm-tfstate"
     region                      = "ru-central-1a"
-    key                         = "terraform/momo-store-adm.tfstate"
+    key                         = "terraform/otus-kuber-adm.tfstate"
     skip_region_validation      = true
     skip_credentials_validation = true
   }

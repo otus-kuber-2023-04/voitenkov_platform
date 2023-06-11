@@ -1,24 +1,24 @@
 $ErrorActionPreference = 'silentlycontinue'
 
-if ($(yc config profile get momo-dev)) {
+if ($(yc config profile get otus-kuber-dev)) {
    
-   # Activate YC CLI profile for sa-momo-store-dev-tf service account (if exists) 
-   yc config profile activate momo-dev
+   # Activate YC CLI profile for sa-otus-kuber-dev-tf service account (if exists) 
+   yc config profile activate otus-kuber-dev
    $Env:TF_VAR_cloud_id  = $(yc config get cloud-id)
    $Env:TF_VAR_folder_id = $(yc config get folder-id)
 
 } 
 else {
 
-   # Create new YC CLI profile for sa-momo-store-dev-tf service account
+   # Create new YC CLI profile for sa-otus-kuber-dev-tf service account
    yc config profile activate momo-cloud
-   $cloud                = $(yc resource-manager cloud get momo-store --format json) | ConvertFrom-Json
+   $cloud                = $(yc resource-manager cloud get otus-kuber --format json) | ConvertFrom-Json
    $Env:TF_VAR_cloud_id  = $cloud.id
    $folder               = $(yc resource-manager folder get dev-folder --format json) | ConvertFrom-Json
    $Env:TF_VAR_folder_id = $folder.id
   
-   yc iam key create --service-account-name sa-momo-store-dev-tf --folder-name dev-folder --output .\secrets\key.json
-   yc config profile create momo-dev
+   yc iam key create --service-account-name sa-otus-kuber-dev-tf --folder-name dev-folder --output .\secrets\key.json
+   yc config profile create otus-kuber-dev
    yc config set service-account-key .\secrets\key.json
    yc config set cloud-id $Env:TF_VAR_cloud_id
    yc config set folder-id $Env:TF_VAR_folder_id

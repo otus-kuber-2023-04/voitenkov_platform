@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if $(yc config profile get momo-cloud); then 
+if $(yc config profile get otus-kuber); then 
    
    # Activate YC CLI profile for momo-store cloud (if exists) 
-   yc config profile activate momo-cloud
+   yc config profile activate otus-kuber
    export TF_VAR_token=$(yc config get token)
    export TF_VAR_cloud_id=$(yc config get cloud-id)
    unset TF_VAR_folder_id
@@ -11,14 +11,14 @@ if $(yc config profile get momo-cloud); then
 else 
 
    # Activate momo-organization YC CLI profile of Yandex Cloud Organization to get current OAuth-token
-   yc config profile activate momo-organization
+   yc config profile activate organization
    export TF_VAR_token=$(yc config get token)
    
    # Create new YC CLI profile for momo-store cloud 
-   yc config profile create momo-cloud
+   yc config profile create otus-kuber
    yc config set token $TF_VAR_token
    
-   export TF_VAR_cloud_id=$(echo $(yc resource-manager cloud get momo-store --format json)|jq -r '.id')
+   export TF_VAR_cloud_id=$(echo $(yc resource-manager cloud get otus-kuber --format json)|jq -r '.id')
    yc config set cloud-id $TF_VAR_cloud_id
    unset TF_VAR_folder_id
    

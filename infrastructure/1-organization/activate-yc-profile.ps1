@@ -1,9 +1,9 @@
 $ErrorActionPreference = 'silentlycontinue'
 
-if ($(yc config profile get momo-organization)) {
+if ($(yc config profile get organization)) {
    
    # Activate YC CLI profile (if exists) 
-   yc config profile activate momo-organization
+   yc config profile activate organization
    $Env:TF_VAR_token     = $(yc config get token)
    $Env:TF_VAR_cloud_id  = $(yc config get cloud-id)
    $Env:TF_VAR_folder_id = $(yc config get folder-id)
@@ -18,7 +18,7 @@ else {
    $Env:TF_VAR_folder_id = $(yc config get folder-id)
 
    # Create new YC CLI profile for Yandex Cloud Organization
-   yc config profile create momo-organization
+   yc config profile create organization
    yc config set token $Env:TF_VAR_token
    yc config set cloud-id $Env:TF_VAR_cloud_id
    yc config set folder-id $Env:TF_VAR_folder_id

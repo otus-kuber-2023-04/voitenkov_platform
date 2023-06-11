@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if $(yc config profile get momo-organization); then 
+if $(yc config profile get organization); then 
    
    # Activate YC CLI profile (if exists) 
-   yc config profile activate momo-organization
+   yc config profile activate organization
    export TF_VAR_token=$(yc config get token)
    export TF_VAR_cloud_id=$(yc config get cloud-id)
    export TF_VAR_folder_id=$(yc config get folder-id)
@@ -17,7 +17,7 @@ else
    export TF_VAR_folder_id=$(yc config get folder-id)
 
    # Create new YC CLI profile for Yandex Cloud Organization
-   yc config profile create momo-organization
+   yc config profile create organization
    yc config set token $TF_VAR_token
    yc config set cloud-id $TF_VAR_cloud_id
    yc config set folder-id $TF_VAR_folder_id

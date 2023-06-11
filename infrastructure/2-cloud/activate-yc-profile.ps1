@@ -1,9 +1,9 @@
 $ErrorActionPreference = 'silentlycontinue'
 
-if ($(yc config profile get momo-cloud)) {
+if ($(yc config profile get otus-kuber)) {
    
    # Activate YC CLI profile for momo-store cloud (if exists) 
-   yc config profile activate momo-cloud
+   yc config profile activate otus-kuber
    $Env:TF_VAR_token     = $(yc config get token)
    $Env:TF_VAR_cloud_id  = $(yc config get cloud-id)
    $Env:TF_VAR_folder_id = ""
@@ -12,13 +12,13 @@ if ($(yc config profile get momo-cloud)) {
 else {
 
    # Activate momo-organization YC CLI profile of Yandex Cloud Organization to get current OAuth-token
-   yc config profile activate momo-organization
+   yc config profile activate organization
    $Env:TF_VAR_token     = $(yc config get token)
 
    # Create new YC CLI profile for momo-store cloud 
-   yc config profile create momo-cloud
+   yc config profile create otus-kuber
    yc config set token $Env:TF_VAR_token
-   $cloud = $(yc resource-manager cloud get momo-store --format json) | ConvertFrom-Json
+   $cloud = $(yc resource-manager cloud get otus-kuber --format json) | ConvertFrom-Json
    $Env:TF_VAR_cloud_id = $cloud.id
    yc config set cloud-id $Env:TF_VAR_cloud_id
    $Env:TF_VAR_folder_id = ""
