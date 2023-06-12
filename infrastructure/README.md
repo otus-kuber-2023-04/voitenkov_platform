@@ -131,7 +131,7 @@ $Env:AWS_SECRET_ACCESS_KEY = "<secret_key from module.organization-cloud>"
 [Environment]::SetEnvironmentVariable('AWS_SECRET_ACCESS_KEY', $Env:AWS_SECRET_ACCESS_KEY, 'User')  
 ```
 
-You may also create another **secrets.ps1** with access and secret keys with values from **module.otus-kuber** section of **terraform.tfstate** file to provide it for the person engaged in creation of folders in momo-store cloud (_/infrastructure/2-cloud - Cloud level Terraform project_).
+You may also create another **secrets.ps1** with access and secret keys with values from **module.otus-kuber** section of **terraform.tfstate** file to provide it for the person engaged in creation of folders in otus-kuber cloud (_/infrastructure/2-cloud - Cloud level Terraform project_).
 
 8. **.\secrets.ps1** # to set environment variables with **access key** and **secret key**, to access to **organization** cloud S3 backend for Terraform state file in adm-folder.
 9. **copy versions.s3 versions.tf**
@@ -143,7 +143,7 @@ You may also create another **secrets.ps1** with access and secret keys with val
 Pls run following commands:
 1. **cd momo-store\infrastructure\2-cloud**
 2. **.\activate-yc-profile.ps1** # to create (activate) **momo-cloud** yc profile and set environment variables with **OAuth-token** and **cloud-id**.
-3.  **copy versions.tf versions.s3** # and delete _backend "s3" {}_ section in **versions.tf**
+3. **copy versions.tf versions.s3** # and delete _backend "s3" {}_ section in **versions.tf**
 4. **terraform init**
 5. **terraform apply**
 
@@ -159,19 +159,23 @@ Pls run following commands. All terraform resourses can be created and modified 
 1. **cd infrastructure\3-development**
 2. **.\activate-yc-profile.ps1** # to create (activate) **otus-kuber-dev** yc profile and set environment variables with **cloud-id** and **folder-id**.
 3. **.\secrets.ps1** # to set environment variables with **access key** and **secret key**, provided to access to **otus-kuber** cloud S3 backend for Terraform state file in **dev-folder**.
-
-copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\3-development\secrets\devops1. It will be copied to development DevOps engineer instance. In case of several DevOps engineers, pls create devops2, devops3 and so on folders with relevant key files.
-Also **count** value in module **"devops-instance"** in **main.tf** should be changed to number of created instances.
-
-4. **terraform init**
-5. **terraform apply**
+4. copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\3-development\secrets\devops1. It will be copied to development DevOps engineer instance. In case of several DevOps engineers, pls create devops2, devops3 and so on folders with relevant key files. Also **count** value in module **"devops-instance"** in **main.tf** should be changed to number of created instances.
+5. **terraform init**
+6. **terraform apply**
 
 Following Yandex Cloud resources will be created:
 1. **DevOps** instances with all tools to deploy infrastructure in Kubernetes. You can get **DevOps** instance IP address from Yandex Cloud web-console or from Terraform output **external_ip_address**.
 2. Development Kubernetes cluster with group of worker nodes, as well as all necessary networks, subnets, service accounts and security groups. 
-3. Public IP address for ingress controller.
-4. DNS Zone for voytenkov.ru domain.
-5. DNS record type A "*.k8s-dev.voytenkov.ru." pointing to IP address for ingress controller.
+3. DNS Zone for domain stated in *terraform.tfvars*
+4. DNS record type A for subdomain stated in *terraform.tfvars* pointing to IP address for ingress controller. You have to change IP to current value.
+
+Pls run following command to get actual external IP address for Kubernetes loadbalancer/ingress controller service. Ingress controller have to be deployed. For Nginx Ingress controller you can run:
+```shell
+$ kubectl get svc ingress-nginx-controller -n ingress-nginx
+NAMESPACE       NAME                                 TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
+ingress-nginx   ingress-nginx-controller             LoadBalancer   10.112.252.18    62.84.116.141   80:31931/TCP,443:32269/TCP   20h
+```
+Pls replace variable **external_ip1** in *terraform.tfvars* with actual External IP and run **terraform apply** to change DNS record.
 
 You may run following commands to get IDs to be replaced in Kubernetes ingresses annotations:
 
@@ -197,8 +201,16 @@ copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\4-prod
 Following Yandex Cloud resources will be created:
 1. Production Kubernetes cluster with group of worker nodes, as well as all necessary networks, subnets, service accounts and security groups. 
 2. Public IP address for ingress controller.
-3. DNS Zone for voytenkov.ru domain.
-4. DNS record type A "*.k8s.voytenkov.ru." pointing to IP address for ingress controller.
+3. DNS Zone for domain stated in *terraform.tfvars*
+4. DNS record type A for subdomain stated in *terraform.tfvars* pointing to IP address for ingress controller. You have to change IP to current value.
+
+Pls run following command to get actual external IP address for Kubernetes loadbalancer/ingress controller service. Ingress controller have to be deployed. For Nginx Ingress controller you can run:
+```shell
+$ kubectl get svc ingress-nginx-controller -n ingress-nginx
+NAMESPACE       NAME                                 TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
+ingress-nginx   ingress-nginx-controller             LoadBalancer   10.112.252.18    62.84.116.141   80:31931/TCP,443:32269/TCP   20h
+```
+Pls replace variable **external_ip1** in *terraform.tfvars* with actual External IP and run **terraform apply** to change DNS record.
 
 You may run following commands to get IDs to be replaced in Kubernetes ingresses annotations:
 
