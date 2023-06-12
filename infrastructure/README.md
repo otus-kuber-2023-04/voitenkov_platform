@@ -200,9 +200,8 @@ copy **id_rsa.pub** file with ssh public key to momo-store\infrastructure\4-prod
 
 Following Yandex Cloud resources will be created:
 1. Production Kubernetes cluster with group of worker nodes, as well as all necessary networks, subnets, service accounts and security groups. 
-2. Public IP address for ingress controller.
-3. DNS Zone for domain stated in *terraform.tfvars*
-4. DNS record type A for subdomain stated in *terraform.tfvars* pointing to IP address for ingress controller. You have to change IP to current value.
+2. DNS Zone for domain stated in *terraform.tfvars*
+3. DNS record type A for subdomain stated in *terraform.tfvars* pointing to IP address for ingress controller. You have to change IP to current value.
 
 Pls run following command to get actual external IP address for Kubernetes loadbalancer/ingress controller service. Ingress controller have to be deployed. For Nginx Ingress controller you can run:
 ```shell
