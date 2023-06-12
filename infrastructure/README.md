@@ -50,9 +50,7 @@ infrastructure
 ├── 4-production - Production environment level Terraform project (to deploy Production infrastructure within specific cloud)
 │   ├── activate-yc-profile.ps1 - script (Windows) for initial configuration of Yandex Cloud CLI and OS environmental variables
 │   ├── activate-yc-profile.sh - script (Linux) for initial configuration of Yandex Cloud CLI and OS environmental variables
-│   ├── activate-alb.ps1 - script (Windows) to create service account key to access Yandex Cloud Container Registry
-│   ├── activate-alb.sh - script (Linux) to install YC ALB ingress controller Helm chart
-│   ├── ... - files related to Terraform project
+│   ├──  ... - files related to Terraform project
 ├── images - some images
 ├── modules - common Terraform modules to use in Terraform projects
 │   ├── bucket - for YC object sorage
@@ -91,8 +89,8 @@ The rest tools will be installed automatically (by cloud-init scipts) on DevOps 
 ###  Create Administrative and Project Clouds within Yandex.Cloud Account Organization (Terraform)
 
 Pls run following commands (Windows cmd commands will be used as examples, for Linux use relevant shell commands and provided scripts):
-1. **git clone git@gitlab.praktikum-services.ru:std-010-065/momo-store.git**
-2. **cd momo-store\infrastructure\1-organization**
+1. **git clone git@github.com:otus-kuber-2023-04/voitenkov_platform.git**
+2. **cd infrastructure\1-organization**
 3. **.\activate-yc-profile.ps1** # to create (activate) **momo-organization** yc profile and set environment variables with **OAuth-token**, **cloud-id** and default folder **folder-id**.
 4. **copy versions.tf versions.s3** # and delete _backend "s3" {}_ section in **versions.tf**
 5. **terraform init**
@@ -141,8 +139,8 @@ You may also create another **secrets.ps1** with access and secret keys with val
 ###  Create Development and Production Folders within otus-kuber Cloud (Terraform)
 
 Pls run following commands:
-1. **cd momo-store\infrastructure\2-cloud**
-2. **.\activate-yc-profile.ps1** # to create (activate) **momo-cloud** yc profile and set environment variables with **OAuth-token** and **cloud-id**.
+1. **cd infrastructure\2-cloud**
+2. **.\activate-yc-profile.ps1** # to create (activate) **otus-kuber** yc profile and set environment variables with **OAuth-token** and **cloud-id**.
 3. **copy versions.tf versions.s3** # and delete _backend "s3" {}_ section in **versions.tf**
 4. **terraform init**
 5. **terraform apply**
