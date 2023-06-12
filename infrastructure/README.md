@@ -138,7 +138,7 @@ You may also create another **secrets.ps1** with access and secret keys with val
 10. **terraform init -migrate-state** # to store Terraform state file in relevant Yandex.Cloud S3 backend.
 
 
-###  Create Development and Production Folders within momo-store Cloud (Terraform)
+###  Create Development and Production Folders within otus-kuber Cloud (Terraform)
 
 Pls run following commands:
 1. **cd momo-store\infrastructure\2-cloud**
