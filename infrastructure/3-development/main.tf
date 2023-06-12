@@ -180,7 +180,7 @@ module "n1-k8s-node-group" {
   k8s_node_group_version            = "1.24"
   k8s_node_group_auto_scale_max     = 5
   k8s_node_group_preemptible        = true
-#  k8s_node_group_nat                = true
+  k8s_node_group_nat                = true
   k8s_node_group_subnet_ids         = [module.a1-subnet.id]
   k8s_node_group_security_group_ids = [
     yandex_vpc_security_group.sg-otus-kuber-dev-k8s-main.id,
@@ -197,4 +197,21 @@ module "n1-k8s-node-group" {
     yandex_vpc_security_group.sg-otus-kuber-dev-k8s-nodes-ssh-access,
     yandex_vpc_security_group.sg-otus-kuber-dev-k8s-public-services,
   ]     
+}
+
+resource "yandex_dns_zone" "z1-dns-zone-otus-kuber" {
+  name        = "dns-zone-${var.project}-1"
+  description = "DNS zone for ${var.domain1} domain"
+  zone        = "${var.domain1}."
+  public      = true
+}
+
+resource "yandex_dns_recordset" "r1-dns-rs-otus-kuber-dev" {
+  zone_id = yandex_dns_zone.z1-dns-zone-otus-kuber.id
+  name    = "*.${var.subdomain1_1}.${var.domain1}."
+  type    = "A"
+  ttl     = 600
+  data    = ["${var.external_ip1}"]
+
+  depends_on = [yandex_dns_zone.z1-dns-zone-otus-kuber]
 }
