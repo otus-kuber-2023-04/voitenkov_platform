@@ -12,3 +12,4 @@ resource "yandex_dns_recordset" "r1-dns-rs-otus-kuber-dev" {
   type    = "A"
   ttl     = 600
   data    = ["${yandex_vpc_address.ip-otus-kuber-dev-k8s-ingress.external_ipv4_address.0.address}"]
+}
