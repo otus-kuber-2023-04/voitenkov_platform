@@ -122,7 +122,7 @@ NAME            NAMESPACE       REVISION        UPDATED                         
 chartmuseum     chartmuseum     1               2023-06-11 22:29:04.860949766 +0200 EET deployed        chartmuseum-3.9.3       0.15.0
 ```
 Критерий успешности установки: 
-- Chartmuseum доступен по URL https://chartmuseum.DOMAIN
+- Chartmuseum доступен по URL https://chartmuseum.k8s-dev.voytenkov.ru
 - Сертификат для данного URL валиден
 
 
@@ -130,6 +130,10 @@ chartmuseum     chartmuseum     1               2023-06-11 22:29:04.860949766 +0
 #### Harbor
 
 - [harbor](https://github.com/goharbor/harbor-helm) хранилище артефактов общего назначения (Docker Registry), поддерживающее helm charts
+
+Файл values.yaml включает в себя:
+- Создание ingress ресурса с корректным hosts.name (должен использоваться nginx-ingress)
+- Автоматическую генерацию Let's Encrypt сертификата
 
 ```shell
 $ helm repo add harbor https://helm.goharbor.io
@@ -148,30 +152,12 @@ Then you should be able to visit the Harbor portal at https://harbor.k8s-dev.voy
 For more details, please visit https://github.com/goharbor/harbor
 ```
 
-### Установите harbor в кластер с использованием helm3
-Для этого: 
-- Реализуем файл [values.yaml]
-- Установил harbor:
-```
-helm repo add harbor https://helm.goharbor.io
-helm repo update
-kubectl create ns harbor
-helm upgrade --install harbor harbor/harbor --wait \
---namespace=harbor \
---version=1.1.2 \
--f kubernetes-templating/harbor/values.yaml
-```
-Реквизиты по умолчанию: admin/Harbor12345
-
 Критерий успешности установки: 
-- Chartmuseum доступен по URL https://harbor.DOMAIN
+- Harbor доступен по URL https://harbor.k8s-dev.voytenkov.ru
 - Сертификат для данного URL валиден
 
-Обратите внимание, как helm3 хранит информацию о release:
-```
-kubectl get secrets -n harbor -l owner=helm
-```
 ### Создаем свой helm chart
+
 #### Типичная жизненная ситуация:
 - У вас есть приложение, которое готово к запуску в Kubernetes
 - У вас есть манифесты для этого приложения, но вам надо запускать его на разных окружениях с разными параметрами
