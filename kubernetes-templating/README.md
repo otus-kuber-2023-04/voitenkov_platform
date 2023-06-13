@@ -539,6 +539,7 @@ deployment.apps/cartservice-prod   0/2     2            0           6m29s
 NAME                                          DESIRED   CURRENT   READY   AGE
 replicaset.apps/cartservice-prod-767b9f97f6   2         2         0       6m29s
 ```
+Поды сваливаются, так как не могут подключиться к Redis.
 
 ### Как проверить работоспособность:
  - см. выше
