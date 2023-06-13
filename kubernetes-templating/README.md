@@ -159,6 +159,8 @@ chartmuseum     chartmuseum     1               2023-06-11 22:29:04.860949766 +0
 - Chartmuseum доступен по URL https://chartmuseum.k8s-dev.voytenkov.ru
 - Сертификат для данного URL валиден
 
+![chartmuseum](/images/hw09-chartmuseum.png)  
+
 #### Задание со ⭐ (chartmuseum)
  
 Не выполнено пока.
@@ -191,6 +193,8 @@ For more details, please visit https://github.com/goharbor/harbor
 Критерий успешности установки: 
 - Harbor доступен по URL https://harbor.k8s-dev.voytenkov.ru
 - Сертификат для данного URL валиден
+- 
+![chartmuseum](/images/hw09-harbor.png)  
 
 ### Задание сo ⭐ (helmfile)
  
@@ -239,6 +243,7 @@ helm create kubernetes-templating/frontend
 ```
 helm upgrade --install frontend kubernetes-templating/frontend --namespace hipster-shop
 ```
+![chartmuseum](/images/hw09-hipster.png)  
 
 #### Пришло время минимально шаблонизировать наш chart frontend
 - выносим данные в переменную (смотри файл values.yaml)
