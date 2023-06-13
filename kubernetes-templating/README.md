@@ -77,10 +77,44 @@ NOTES:
 cert-manager v1.12.0 has been deployed successfully!
 ```
 Настроил CR для cert-manager по инструкции https://cert-manager.io/docs/tutorials/acme/nginx-ingress/ 
+В документации описывают ClusterIssues и Issues. Создаем
+```shell
+$ kubectl apply -f cert-manager
+```
 
 #### Chart Museum
 
 Cпециализированный репозиторий для хранения helm charts.
+
+Узнаем External Ip nginx-ingress
+```shell
+$ kubectl get svc -A
+NAMESPACE       NAME                                 TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
+cert-manager    cert-manager                         ClusterIP      10.112.162.72    <none>          9402/TCP                     5h23m
+cert-manager    cert-manager-webhook                 ClusterIP      10.112.180.53    <none>          443/TCP                      5h23m
+default         kubernetes                           ClusterIP      10.112.128.1     <none>          443/TCP                      11h
+ingress-nginx   ingress-nginx-controller             LoadBalancer   10.112.252.18    62.84.116.141   80:31931/TCP,443:32269/TCP   5h40m
+ingress-nginx   ingress-nginx-controller-admission   ClusterIP      10.112.219.240   <none>          443/TCP                      5h40m
+kube-system     kube-dns                             ClusterIP      10.112.128.2     <none>          53/UDP,53/TCP,9153/TCP       11h
+kube-system     metrics-server                       ClusterIP      10.112.214.95    <none>          443/TCP                      11h
+```
+
+наш ip - 62.84.116.141. Изменяем переменную ресурса Terraform:
+```shell
+external_ip1 = "62.84.116.141"
+
+resource "yandex_dns_recordset" "r1-dns-rs-otus-kuber-dev" {
+  zone_id = yandex_dns_zone.z1-dns-zone-otus-kuber.id
+  name    = "*.${var.subdomain1_1}.${var.domain1}."
+  type    = "A"
+  ttl     = 600
+  data    = ["${var.external_ip1}"]
+
+  depends_on = [yandex_dns_zone.z1-dns-zone-otus-kuber]
+}
+```
+**Terraform apply** - в облаке в записи DNS *.k8s-dev.voytenkov.ru прописывается актуальный IP адрес, соответствующий нашему Nginx Ingress.
+Имена DNS в поддомене *.k8s-dev.voytenkov.ru будут использоваться в настройках Ingress нашего кластера.
 
 Файл values.yaml включает в себя:
 - Создание ingress ресурса с корректным hosts.name (должен использоваться nginx-ingress)
@@ -125,7 +159,9 @@ chartmuseum     chartmuseum     1               2023-06-11 22:29:04.860949766 +0
 - Chartmuseum доступен по URL https://chartmuseum.k8s-dev.voytenkov.ru
 - Сертификат для данного URL валиден
 
-
+#### Задание со ⭐ (chartmuseum)
+ 
+Не выполнено пока.
 
 #### Harbor
 
@@ -155,6 +191,10 @@ For more details, please visit https://github.com/goharbor/harbor
 Критерий успешности установки: 
 - Harbor доступен по URL https://harbor.k8s-dev.voytenkov.ru
 - Сертификат для данного URL валиден
+
+### Задание сo ⭐ (helmfile)
+ 
+Выполнено, см. kubernetes-templating/helmfile/helmfile.yaml
 
 ### Создаем свой helm chart
 
@@ -229,7 +269,7 @@ helm dep update kubernetes-templating/hipster-shop
 ```
 helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
 ```
-## Таким образом мы можем микросервисное приложение выносить в отдельную разработку и добавлять при необходмости
+### Таким образом мы можем микросервисное приложение выносить в отдельную разработку и добавлять при необходмости
 
 Осталось понять, как из CI-системы мы можем менять параметры helm chart, описанные в values.yaml. Для этого существует специальный ключ --set. Изменим NodePort для frontend в release, не меняя его в самом chart:
 ```
@@ -237,15 +277,262 @@ helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespa
 hipster-shop --set frontend.service.NodePort=31234
 ```
 
-⭐ Выберите сервисы, которые можно установить как зависимости, используя community chart's. Например, это может быть Redis. Реализуйте их установку через Chart.yaml и обеспечьте сохранение работоспособности приложения.
-- Убираем redis из hister-shop/templates/all-hipster-shop.yaml
-- Создаем ```helm create redis```
-- Добавляем зависимости hister-shop/Chart.yaml и обновляем эти зависимости ```helm dep update kubernetes-templating/hipster-shop```
-- В директории kubernetes-templating/hipster-shop/charts должен появится архив redis-****
-- Обновляем release hipster-shop ```helm upgrade --install hipster-shop hipster-shop --namespace hipster-shop```
+### Задание сo ⭐ (community charts)
 
+Не выполнено пока.
 
+### Необязательное задание (helm secrets)
+
+Не выполнено пока.
+
+### Создание репозитория Harbor
+
+#### Создаем скрипт скрипт repo.sh 
+
+Создаем и выполняем скрипт repo.sh
+```shell
+#!/bin/bash
+helm3 repo add templating https://harbor.k8s-dev.voytenkov.ru/library && helm3 repo update
 ```
+
+#### Загружаем пакеты в Harbor
+
+```shell
+helm registry login -u admin harbor.k8s-dev.voytenkov.ru
+Password:
+Login Succeeded
+$ helm push frontend-0.1.1.tgz oci://harbor.k8s-dev.voytenkov.ru/library
+Pushed: harbor.k8s-dev.voytenkov.ru/library/frontend:0.1.1
+Digest: sha256:3203892dc838417477656933d8a009ede3be16b6763932e94432f8d0245fd1ab
+```
+
+### Kubecfg/Jsonnet
+        
+Вытаскиваем из конфига all.yaml Deployment и Service для paymentservice и shippingservice
+Переустановим и убедимся что сервисы catalogue и payment пропали
+```shell
+$ helm upgrade --install hipster-shop ./hipster-shop --namespace hipster-shop
+```
+Пишем services.jsonnet
+взят со сниппета https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-04/05-Templating/hipster-shop-jsonnet/services.jsonnet
+
+Применяем:
+```shell
+$ kubecfg update services.jsonnet --namespace hipster-shop
+INFO  Validating deployments paymentservice
+INFO  validate object "apps/v1, Kind=Deployment"
+INFO  Validating services paymentservice
+INFO  validate object "/v1, Kind=Service"
+INFO  Validating deployments shippingservice
+INFO  validate object "apps/v1, Kind=Deployment"
+INFO  Validating services shippingservice
+INFO  validate object "/v1, Kind=Service"
+INFO  Fetching schemas for 4 resources
+INFO  Creating services paymentservice
+INFO  Creating services shippingservice
+INFO  Creating deployments paymentservice
+INFO  Creating deployments shippingservice
+```
+
+### Задание сo ⭐ (jsonnet другие решения)
+
+Не выполнено пока.
+
+### Kustomize
+
+Отпилим сервис cartservice и переустановим.
+```
+$ helm upgrade --install hipster-shop ./hipster-shop --namespace hipster-shop
+```
+
+В папке base лежат оригинальные сами манифесты и файл kustomize указывающих какие ресурсы нужно использовать для кастомизации.
+В папке overrides описаны окружения Dev и Prod.
+
+В Dev окружении мы добавили параметр Replicas: 1. Метки и имя неймспеса остались оригинальные. Проверяем:
+```shell
+$ kubectl kustomize kubernetes-templating/kustomize/overrides/dev/
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app: cartservice
+  name: hipster-shop
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+  namespace: hipster-shop
+spec:
+  ports:
+  - name: grpc
+    port: 7070
+    targetPort: 7070
+  selector:
+    app: cartservice
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+  namespace: hipster-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      containers:
+      - env:
+        - name: REDIS_ADDR
+          value: redis-cart:6379
+        - name: PORT
+          value: "7070"
+        - name: LISTEN_ADDR
+          value: 0.0.0.0
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.1.3
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+            - -rpc-timeout=5s
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: server
+        ports:
+        - containerPort: 7070
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+            - -rpc-timeout=5s
+          initialDelaySeconds: 15
+        resources:
+          limits:
+            cpu: 300m
+            memory: 128Mi
+          requests:
+            cpu: 200m
+            memory: 64Mi
+```
+
+В Prod окружении мы добавили параметр Replicas: 2 и поменяли limits и requests. Метки и имя неймспеса с суффиксом **-prod**. Проверяем:
+```shell
+$ kubectl kustomize kubernetes-templating/kustomize/overrides/prod/
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app: cartservice-prod
+  name: hipster-shop-prod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cartservice-prod
+  name: cartservice-prod
+  namespace: hipster-shop-prod
+spec:
+  ports:
+  - name: grpc
+    port: 7070
+    targetPort: 7070
+  selector:
+    app: cartservice-prod
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cartservice-prod
+  name: cartservice-prod
+  namespace: hipster-shop-prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cartservice-prod
+  template:
+    metadata:
+      labels:
+        app: cartservice-prod
+    spec:
+      containers:
+      - env:
+        - name: REDIS_ADDR
+          value: redis-cart:6379
+        - name: PORT
+          value: "7070"
+        - name: LISTEN_ADDR
+          value: 0.0.0.0
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.1.3
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+            - -rpc-timeout=5s
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: server
+        ports:
+        - containerPort: 7070
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+            - -rpc-timeout=5s
+          initialDelaySeconds: 15
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 128Mi
+```
+
+Деплоим:
+```shell
+$ kubectl apply -k kubernetes-templating/kustomize/overrides/dev/
+namespace/hipster-shop configured
+service/cartservice created
+deployment.apps/cartservice created
+
+$ kubectl apply -k kubernetes-templating/kustomize/overrides/prod/
+namespace/hipster-shop-prod created
+service/cartservice-prod created
+deployment.apps/cartservice-prod created
+
+$ kubectl get all -n hipster-shop-prod
+NAME                                    READY   STATUS             RESTARTS      AGE
+pod/cartservice-prod-767b9f97f6-cbk6q   0/1     CrashLoopBackOff   6 (32s ago)   6m29s
+pod/cartservice-prod-767b9f97f6-gnqk2   0/1     CrashLoopBackOff   1 (5s ago)    10s
+
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/cartservice-prod   ClusterIP   10.112.213.30   <none>        7070/TCP   6m30s
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/cartservice-prod   0/2     2            0           6m29s
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/cartservice-prod-767b9f97f6   2         2         0       6m29s
+```
+
 ### Как проверить работоспособность:
  - см. выше
 ## PR checklist:
