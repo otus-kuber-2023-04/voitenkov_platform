@@ -27,6 +27,8 @@
   - Managed Kubernetes cluster
   - зона и записи DNS
 
+![Yandex.Cloud](/images/hw09-yandex-cloud.png)  
+
 Подробнее по инфраструктурной части см. https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-templating/infrastructure/README.md
 
 ## Решение Д/З № 9
