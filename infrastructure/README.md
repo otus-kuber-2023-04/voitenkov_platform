@@ -221,9 +221,9 @@ To get security groups IDs for Kubernetes ingresses.
 
 ### Connect to Managed Kubernetes Clusters in Yandex Cloud
 
-To get credentials for Kubernetes Cluster in Development environment from outside Yandex Cloud network pls run following command:
+To get credentials for Kubernetes Cluster in Development environment from Yandex Cloud network pls run following command:
 
-**yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-dev-cluster-1 --external**
+**yc managed-kubernetes cluster   get-credentials k8s-otus-kuber-dev-cluster-1 --internal**
 
 To get credentials for Kubernetes Cluster in Production environment from outside Yandex Cloud network pls run following command:
 
