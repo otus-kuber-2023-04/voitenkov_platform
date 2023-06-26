@@ -145,7 +145,6 @@ cl1oqhmjrhj4eneiiavf-unad   Ready    <none>   110m    v1.24.8
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo update
 $ helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
-# kubectl apply -f cert-manager
 
 $ helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx -f nginx-ingress.values.yaml  --namespace ingress-nginx --create-namespace --atomic 
 
@@ -154,6 +153,7 @@ NAME                                        READY   STATUS    RESTARTS   AGE   I
 ingress-nginx-controller-6489c68749-5w49s   1/1     Running   0          10m   10.96.129.8   cl1oqhmjrhj4eneiiavf-unad   <none>           <none>
 ingress-nginx-controller-6489c68749-hrqnl   1/1     Running   0          10m   10.96.131.7   cl1oqhmjrhj4eneiiavf-eliv   <none>           <none>
 ingress-nginx-controller-6489c68749-trsxx   1/1     Running   0          10m   10.96.130.8   cl1oqhmjrhj4eneiiavf-ecar   <none>           <none>
+```
 
 ### Установка Kibana
 
@@ -190,7 +190,7 @@ $ helm upgrade --install fluent-bit fluent/fluent-bit -n observability --atomic
 
 ### Мониторинг ElasticSearch
 
-#### Устанавливаем **Prometheus Elasticsearch Exporter**:
+#### Устанавливаем Prometheus Elasticsearch Exporter:
 
 ```shell
 $ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -208,7 +208,7 @@ NOTES:
   kubectl port-forward $POD_NAME 9108:9108 --namespace observability
 ```
 
-Устанавливаем **Kube Prometheus Stack **:
+#### Устанавливаем Kube Prometheus Stack:
 
 ```shell
 $ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n observability -f prometheus-operator.values.yaml
