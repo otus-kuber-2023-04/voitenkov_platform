@@ -190,7 +190,7 @@ $ helm upgrade --install fluent-bit fluent/fluent-bit -n observability --atomic
 
 ### Мониторинг ElasticSearch
 
-#### Устанавливаем **Prometheus Elasticsearch Exporter**:
+#### Устанавливаем Prometheus Elasticsearch Exporter:
 
 ```shell
 $ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -208,7 +208,7 @@ NOTES:
   kubectl port-forward $POD_NAME 9108:9108 --namespace observability
 ```
 
-Устанавливаем **Kube Prometheus Stack **:
+#### Устанавливаем Kube Prometheus Stack:
 
 ```shell
 $ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n observability -f prometheus-operator.values.yaml
