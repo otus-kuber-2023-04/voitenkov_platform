@@ -145,7 +145,6 @@ cl1oqhmjrhj4eneiiavf-unad   Ready    <none>   110m    v1.24.8
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo update
 $ helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
-# kubectl apply -f cert-manager
 
 $ helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx -f nginx-ingress.values.yaml  --namespace ingress-nginx --create-namespace --atomic 
 
