@@ -1,4 +1,4 @@
-# Выполнено ДЗ № 9
+# Выполнено ДЗ № 10
 
  - [x] Основное ДЗ
  - [ ] Задание со ⭐ - issue с дублирующимися полями уже пофиксено и в текушей версии приложения не воспроизводится
@@ -184,7 +184,7 @@ $ helm upgrade --install fluent-bit fluent/fluent-bit -n observability --atomic
 ```
 
 **Fluent-bit** сконфигурирован на прием логов из кластера Kubernetes и на отправку их в Elasticsearch. Логи микросервисов Hipster-shop можно посмотреть в Kibana:
-![Kubernetes logs](../img/hw10-kibana-logs.png)
+![Kubernetes logs](../img/hw10-kibana-logs2.png)
 
 Описанная в методичке прблема с дубликатами полей не проявляется уже, так как давно исправлена.
 
@@ -272,7 +272,7 @@ error when evicting pods/"elasticsearch-master-1" -n "observability" (will retry
 $ kubectl delete pod elasticsearch-master-1 -n observability
 pod "elasticsearch-master-1" deleted
 
-$ kubectl get po -n observability
+$ kubectl get po -n observability -l chart=elasticsearch
 NAME                                                     READY   STATUS    RESTARTS      AGE
 elasticsearch-master-0                                   0/1     Pending   0             8m20s
 elasticsearch-master-1                                   0/1     Pending   0             78s
@@ -285,98 +285,70 @@ cl1oqhmjrhj4eneiiavf-eliv   Ready                      <none>   4d22h   v1.24.8
 cl1oqhmjrhj4eneiiavf-ixos   Ready                      <none>   3m6s    v1.24.8
 cl1oqhmjrhj4eneiiavf-unad   Ready,SchedulingDisabled   <none>   4d23h   v1.24.8
 ```
+В логах Elasticsearch видим сообщение: "master not discovered or elected yet, an election requires at least 2 nodes with ids from..."
 
 Восстанавливаем работоспособность кластера:
 
 ```shell
-kubectl uncordon cl1oqhmjrhj4eneiiavf-unad
+$ kubectl uncordon cl1oqhmjrhj4eneiiavf-unad
 node/cl1oqhmjrhj4eneiiavf-unad uncordoned
-andy@res-3:/mnt/c/Users/Admin$ k get nodes
+$ kubectl get nodes
 NAME                        STATUS   ROLES    AGE     VERSION
 cl15meagv87pu1svnhq5-axif   Ready    <none>   10d     v1.24.8
 cl1oqhmjrhj4eneiiavf-eliv   Ready    <none>   4d22h   v1.24.8
 cl1oqhmjrhj4eneiiavf-ixos   Ready    <none>   7m59s   v1.24.8
 cl1oqhmjrhj4eneiiavf-unad   Ready    <none>   5d      v1.24.8
 
-$ k get po -n observability
+$ k get po -n observability -l chart=elasticsearch
 NAME                                                     READY   STATUS    RESTARTS      AGE
-alertmanager-prometheus-kube-prometheus-alertmanager-0   2/2     Running   0             20m
 elasticsearch-master-0                                   0/1     Running   0             20m
 elasticsearch-master-1                                   1/1     Running   0             13m
 elasticsearch-master-2                                   1/1     Running   0             149m
-fluent-bit-c4wpv                                         1/1     Running   0             137m
-kibana-kibana-799769b95c-2jws9                           1/1     Running   0             15m
-prometheus-elasticsearch-exporter-59b8dc448c-d45fv       1/1     Running   0             113m
-prometheus-grafana-77cbb68cc9-g8mfq                      3/3     Running   6 (11h ago)   31h
-prometheus-kube-prometheus-operator-5d87d8765f-nkv6k     1/1     Running   0             15m
-prometheus-kube-state-metrics-678b958c5-wfrvk            1/1     Running   0             20m
-prometheus-prometheus-kube-prometheus-prometheus-0       2/2     Running   4 (11h ago)   31h
-prometheus-prometheus-node-exporter-88rhg                1/1     Running   2 (11h ago)   31h
-prometheus-prometheus-node-exporter-ld5vd                1/1     Running   0             8m26s
-prometheus-prometheus-node-exporter-vg7mq                1/1     Running   2 (11h ago)   31h
-
-
-В логах Elasticsearch видим сообщение: "master not discovered or elected yet, an election requires at least 2 nodes with ids from..."
-
-![grafana](../img/logging05.png)
-
-### 2.5 Возвращаем ноды в работу
-```
-$ kubectl uncordon gke-mycluster-infra-pool-c4749539-n60k
-$ kubectl uncordon gke-mycluster-infra-pool-c4749539-mc0s
 ```
 
+![grafana](../img/hw10-grafana-elastic-recovered.png)
 
-![grafana](../img/logging06.png)
+### Логи nginx-ingress
 
-## 3 nginx-ingress
 Чтобы появились логи поменяем fluentbit.values.yaml и nginx-ingress.values.yaml
-```
-$ helm3 upgrade --install fluent-bit stable/fluent-bit --namespace observability\
-               -f fluent-bit.values.yaml && \
-  helm3 upgrade --install nginx-ingress stable/nginx-ingress --wait \
-                --namespace=nginx-ingress \
-                -f nginx-ingress.values.yaml
-```
-получим
+Получим:
 
+![kibana](../img/hw10-kibana-nginx-index.png)
 
-![kibana](../img/logging07.png)
-
-### 3.1  Создадим дашбоард
+Создадим дэшбоард
 (kubernetes.labels.app : nginx-ingress and status < 500 and status >= 400)
 
+![kibana](../img/hw10-kibana-nginx.png)
 
-![kibana](../img/logging08.png)
+### Loki
 
-## 4. Loki
+Установка:
 
-### 4.1 Установка
+```shell
+$ helm repo add grafana https://grafana.github.io/helm-charts
+$ helm repo update
+$ helm upgrade --install loki grafana/loki-stack --namespace=observability -f loki.values.yaml --atomic
+Release "loki" does not exist. Installing it now.
+NAME: loki
+LAST DEPLOYED: Mon Jun 26 18:04:04 2023
+NAMESPACE: observability
+STATUS: deployed
+REVISION: 1
+NOTES:
+The Loki stack has been deployed to your cluster. Loki can now be added as a datasource in Grafana.
+
+See http://docs.grafana.org/features/datasources/loki/ for more detail.
+
+helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n observability -f kube-prometheus-stack.values.yaml --atomic
 ```
-$ helm3 repo add loki https://grafana.github.io/loki/charts
-$ helm3 repo update
-$ helm3 upgrade --install loki loki/loki-stack --namespace=observability -f loki.values.yml
-$ helm3 upgrade --install prometheus-operator stable/prometheus-operator --version=8.5.14 \
-                --namespace=observability -f prometheus-operator.values.yaml
-```
 
-### 4.2 Grafana
-Откроем Графану и посмотрим логи от Loki
+Откроем Grafana и  посмотрим логи от Loki
 
+![grafana-loki](../img/hw10-loki-explore.png)
 
-![grafana-loki](../img/logging09.png)
+Cоздадим свой дэшборд для Nginx Ingress:
 
-### 4.3 Cоздадим свой дашборд
-
-
-![grafana-loki](../img/logging10.png)
-
-
-
-### 
-
-#### 
-
+![grafana-loki](../img/hw10-grafana-nginx.png)
 
 ## Как проверить работоспособность:
  - см. выше
