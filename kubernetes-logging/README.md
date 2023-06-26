@@ -174,7 +174,7 @@ NOTES:
 3. Retrieve the kibana service account token.
   $ kubectl get secrets --namespace=observability kibana-kibana-es-token -ojsonpath='{.data.token}' | base64 -d
 ```
-![kibana](../img/hw10-kibana.png)
+![kibana](/images/hw10-kibana.png)
 
 ### Установка Fluent-bit
 
@@ -184,7 +184,7 @@ $ helm upgrade --install fluent-bit fluent/fluent-bit -n observability --atomic
 ```
 
 **Fluent-bit** сконфигурирован на прием логов из кластера Kubernetes и на отправку их в Elasticsearch. Логи микросервисов Hipster-shop можно посмотреть в Kibana:
-![Kubernetes logs](../img/hw10-kibana-logs2.png)
+![Kubernetes logs](/images/hw10-kibana-logs2.png)
 
 Описанная в методичке прблема с дубликатами полей не проявляется уже, так как давно исправлена.
 
@@ -227,7 +227,7 @@ Visit https://github.com/prometheus-operator/kube-prometheus for instructions on
 
 #### Импортируем дашбоард (https://grafana.com/grafana/dashboards/4358) в Grafana:
 
-![grafana](../img/hw10-grafana-elastic.png)
+![grafana](/images/hw10-grafana-elastic.png)
 
 #### Выключаем одну ноду:
 
@@ -247,7 +247,7 @@ pod/elasticsearch-master-0 evicted
 pod/ingress-nginx-controller-6489c68749-trsxx evicted
 node/cl1oqhmjrhj4eneiiavf-ecar drained
 ```
-![grafana](../img/hw10-grafana-elastic-drained.png)
+![grafana](/images/hw10-grafana-elastic-drained.png)
 
 #### Уроним еще одну ноду
 ```
@@ -306,19 +306,19 @@ elasticsearch-master-1                                   1/1     Running   0    
 elasticsearch-master-2                                   1/1     Running   0             149m
 ```
 
-![grafana](../img/hw10-grafana-elastic-recovered.png)
+![grafana](/images/hw10-grafana-elastic-recovered.png)
 
 ### Логи nginx-ingress
 
 Чтобы появились логи поменяем fluentbit.values.yaml и nginx-ingress.values.yaml
 Получим:
 
-![kibana](../img/hw10-kibana-nginx-index.png)
+![kibana](/images/hw10-kibana-nginx-index.png)
 
 Создадим дэшбоард
 (kubernetes.labels.app : nginx-ingress and status < 500 and status >= 400)
 
-![kibana](../img/hw10-kibana-nginx.png)
+![kibana](/images/hw10-kibana-nginx.png)
 
 ### Loki
 
@@ -344,11 +344,11 @@ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n 
 
 Откроем Grafana и  посмотрим логи от Loki
 
-![grafana-loki](../img/hw10-loki-explore.png)
+![grafana-loki](/images/hw10-loki-explore.png)
 
 Cоздадим свой дэшборд для Nginx Ingress:
 
-![grafana-loki](../img/hw10-grafana-nginx.png)
+![grafana-loki](/images/hw10-grafana-nginx.png)
 
 ## Как проверить работоспособность:
  - см. выше
