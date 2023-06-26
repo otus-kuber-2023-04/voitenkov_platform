@@ -64,6 +64,13 @@ variable "k8s_node_group_platform_id" {
   nullable    = false
 }
 
+variable "k8s_node_group_node_taints" {
+  default     = []
+  type        = list
+  description = "K8s node group node taints"
+  nullable    = false
+}
+
 variable "k8s_node_group_preemptible" {
   default     = false
   type        = bool

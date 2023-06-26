@@ -170,16 +170,48 @@ module "c1-k8s-cluster" {
   ]     
 }
 
-module "n1-k8s-node-group" {
+module "default-pool-k8s-node-group" {
   source                            = "../modules/k8s-node-group"
-  k8s_node_group_name               = "worker-nodes-1"
+  k8s_node_group_name               = "default-pool"
   k8s_node_group_project            = var.project
   k8s_node_group_environment        = var.environment
   k8s_node_group_cluster            = "cluster-1"
   k8s_node_group_cluster_id         = module.c1-k8s-cluster.id
   k8s_node_group_version            = "1.24"
-  k8s_node_group_auto_scale_max     = 5
+  k8s_node_group_auto_scale_max     = 1
   k8s_node_group_preemptible        = true
+  k8s_node_group_memory             = 8
+  k8s_node_group_nat                = true
+  k8s_node_group_subnet_ids         = [module.a1-subnet.id]
+  k8s_node_group_security_group_ids = [
+    yandex_vpc_security_group.sg-otus-kuber-dev-k8s-main.id,
+    yandex_vpc_security_group.sg-otus-kuber-dev-k8s-nodes-ssh-access.id,
+    yandex_vpc_security_group.sg-otus-kuber-dev-k8s-public-services.id
+  ]
+  k8s_node_group_username           = "devops1"
+  k8s_node_group_ssh_public_key     = file("./.secrets/devops1/id_rsa.pub")
+ 
+  depends_on = [
+    module.c1-k8s-cluster,
+    module.a1-subnet,
+    yandex_vpc_security_group.sg-otus-kuber-dev-k8s-main,
+    yandex_vpc_security_group.sg-otus-kuber-dev-k8s-nodes-ssh-access,
+    yandex_vpc_security_group.sg-otus-kuber-dev-k8s-public-services,
+  ]     
+}
+
+module "infra-pool-k8s-node-group" {
+  source                            = "../modules/k8s-node-group"
+  k8s_node_group_name               = "infra-pool"
+  k8s_node_group_project            = var.project
+  k8s_node_group_environment        = var.environment
+  k8s_node_group_cluster            = "cluster-1"
+  k8s_node_group_cluster_id         = module.c1-k8s-cluster.id
+  k8s_node_group_version            = "1.24"
+  k8s_node_group_node_taints        = ["node-role=infra:NoSchedule"]
+  k8s_node_group_auto_scale_max     = 3
+  k8s_node_group_preemptible        = true
+  k8s_node_group_memory             = 8
   k8s_node_group_nat                = true
   k8s_node_group_subnet_ids         = [module.a1-subnet.id]
   k8s_node_group_security_group_ids = [
@@ -215,3 +247,4 @@ resource "yandex_dns_recordset" "r1-dns-rs-otus-kuber-dev" {
 
   depends_on = [yandex_dns_zone.z1-dns-zone-otus-kuber]
 }
+
