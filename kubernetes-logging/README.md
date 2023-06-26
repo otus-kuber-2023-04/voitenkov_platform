@@ -153,6 +153,7 @@ NAME                                        READY   STATUS    RESTARTS   AGE   I
 ingress-nginx-controller-6489c68749-5w49s   1/1     Running   0          10m   10.96.129.8   cl1oqhmjrhj4eneiiavf-unad   <none>           <none>
 ingress-nginx-controller-6489c68749-hrqnl   1/1     Running   0          10m   10.96.131.7   cl1oqhmjrhj4eneiiavf-eliv   <none>           <none>
 ingress-nginx-controller-6489c68749-trsxx   1/1     Running   0          10m   10.96.130.8   cl1oqhmjrhj4eneiiavf-ecar   <none>           <none>
+```
 
 ### Установка Kibana
 
