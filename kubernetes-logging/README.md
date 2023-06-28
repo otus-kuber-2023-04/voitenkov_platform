@@ -93,7 +93,7 @@ NOTES:
   $ helm --namespace=observability test elasticsearch
 ```
 
-Видим что Elasticsearch пытался запуститься на одной (все три реплики), но запустился только один. Это связано с параметром tolerations.
+Видим, что Elasticsearch пытался запуститься на одной (все три реплики), но запустился только один. Это связано с параметром tolerations.
 Нод-группа Infra-pool1 пока без нод.
 
 ```shell
