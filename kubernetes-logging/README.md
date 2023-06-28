@@ -93,7 +93,7 @@ NOTES:
   $ helm --namespace=observability test elasticsearch
 ```
 
-Видим что Elasticsearch пытался запуститься на одной (все три реплики) но запустился только один. Это связано с параметром tolerations
+Видим что Elasticsearch пытался запуститься на одной (все три реплики), но запустился только один. Это связано с параметром tolerations.
 Нод-группа Infra-pool1 пока без нод.
 
 ```shell
@@ -106,11 +106,11 @@ elasticsearch-yvkne-test   0/1     Error     0          89s     10.96.128.21   c
 
 $ kubectl get nodes
 NAME                        STATUS   ROLES    AGE    VERSION
-cl15meagv87pu1svnhq5-axif   Ready    <none>   111m   v1.24.8```
+cl15meagv87pu1svnhq5-axif   Ready    <none>   111m   v1.24.8
 ```
 
-Создадим файл elasticsearch.values.yaml где укажем что мы можем ставить и на другие ноды.
-Чтобы установить пул машин на которых должен запускаться ElasticSearch добавим еще настройку nodeSelector:
+Создадим файл elasticsearch.values.yaml, где укажем, что мы можем ставить и на другие ноды.
+Чтобы установить пул машин, на которых должен запускаться ElasticSearch, добавим еще настройку nodeSelector:
 
 ```shell
 tolerations:
