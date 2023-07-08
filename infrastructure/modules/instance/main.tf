@@ -1,7 +1,7 @@
 locals {
   instance_name		        = "vm-${var.instance_project}-${var.instance_environment}-${var.instance_name}"
   instance_description    = "DevOps workstation No. ${var.instance_no} in ${var.instance_project} ${var.instance_environment} environment"
-  instance_ssh_public_key = file("./secrets/${var.instance_name}/id_rsa.pub")
+  instance_ssh_public_key = file("./.secrets/${var.instance_name}/id_rsa.pub")
 }
 
 data "yandex_iam_service_account" "service_account" {

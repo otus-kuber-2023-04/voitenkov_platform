@@ -35,7 +35,7 @@ resource "yandex_vpc_security_group" "sg-otus-kuber-dev-instance-linux" {
     v4_cidr_blocks = [local.cidr_internet]
   }
 
-  depends_on = [yandex_vpc_network.network-momo-store-dev]
+  depends_on = [yandex_vpc_network.network-otus-kuber-dev]
 }
 
 module "devops-sa" {
@@ -60,8 +60,7 @@ module "devops-instance" {
   instance_subnet_id          = module.a1-subnet.id
   instance_nat                = true
   instance_security_group_ids = [
-    yandex_vpc_security_group.sg-otus-kuber-dev-instance-linux.id,    
-    yandex_vpc_security_group.sg-otus-kuber-dev-instance-webserver.id
+    yandex_vpc_security_group.sg-otus-kuber-dev-instance-linux.id
   ]
   instance_user_data_file     = "ubuntu-devops"
   instance_serial_port_enable = 1
