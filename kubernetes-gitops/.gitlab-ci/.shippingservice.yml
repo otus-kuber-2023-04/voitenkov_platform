@@ -1,0 +1,42 @@
+include:
+  - template: Security/Container-Scanning.gitlab-ci.yml
+
+variables:
+  SERVICE_NAME: "shippingservice"
+
+stages:
+  - build
+  - scan
+
+image_build:
+  stage: build
+  image:
+    name: $CI_REGISTRY_IMAGE/kaniko-executor:$KANIKO_TAG
+    entrypoint: [""]
+  tags: 
+    - k8s
+  variables:
+    CACHE_TTL: 2190h0m0s # three months
+    IMAGE_NAME: $SERVICE_NAME
+    CONTEXT: $CI_PROJECT_DIR/application/src/$SERVICE_NAME
+  script:
+    - >
+      /kaniko/executor
+      --context "$CONTEXT/"
+      --dockerfile "$CONTEXT/Dockerfile"
+      --destination "$CI_REGISTRY_IMAGE/$IMAGE_NAME:$APP_VERSION"
+      --destination "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest"
+      --cache=true
+      --cache-repo $CI_REGISTRY_IMAGE/$IMAGE_NAME
+      --cache-ttl $CACHE_TTL
+
+container_scanning:
+  stage: scan
+  tags: 
+    - k8s
+  needs: 
+    - image_build
+  variables:
+    CS_IMAGE: $CI_REGISTRY_IMAGE/$SERVICE_NAME:$APP_VERSION
+    GIT_STRATEGY: fetch
+    CS_DOCKERFILE_PATH:  $CI_PROJECT_DIR/application/src/$SERVICE_NAME/Dockerfile
