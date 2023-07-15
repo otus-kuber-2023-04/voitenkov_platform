@@ -1,0 +1,135 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: frontend
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: frontend
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: adservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: adservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: cartservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: cartservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: checkoutservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: checkoutservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: currencyservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: currencyservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: emailservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: emailservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: loadgenerator
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: loadgenerator
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: paymentservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: paymentservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: productcatalogservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: productcatalogservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: recommendationservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: recommendationservice
+  policy:
+    semver:
+      range: 0.0.x
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: shippingservice
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: shippingservice
+  policy:
+    semver:
+      range: 0.0.x
+
+
+
