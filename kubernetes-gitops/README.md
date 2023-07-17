@@ -537,10 +537,11 @@ shippingservice-9c6bbf4b-rrb8k              2/2     Running   0          10m
 ### Удаление инфраструктуры
 
 Для удаления **Production** инфраструктуры, запускаем пайплайн, а в нем вручную запускаем Destroy Job, инфраструктура удаляется:
+
 ![GitLab TF destroy_pipeline](/images/hw11-destroy.png)  
 ![GitLab TF_destroy_job](/images/hw11-destroy-job.png)  
 
-Для удаления **Development** инфраструктуры, пайплайн не получится задействовать, так как собственно в ней запущен Gitlab Runner. Запускаем Terraform Destroy в каталоге проекта Infrastructure/3-Development/
+Для удаления **Development** инфраструктуры, пайплайн не получится задействовать, так как собственно в ней запущен Gitlab Runner. Запускаем Terraform Destroy в каталоге проекта Infrastructure/3-Development
 
 ## Как проверить работоспособность:
  - см. выше
