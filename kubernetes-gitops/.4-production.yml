@@ -22,5 +22,15 @@ before_script:
   - echo "$YC_IAM_KEY" > ~/key.json
   - echo "$SSH_PUBLIC_KEY" > ~/id_rsa.pub
 
+deploy:
+  environment:
+    name: $TF_STATE_NAME
+    action: start
+    on_stop: destroy
+
+destroy:
+  extends: .terraform:destroy
+  environment:
+    name: $TF_STATE_NAME
+    action: stop    
     
-  
