@@ -534,6 +534,13 @@ recommendationservice-58cb799b76-rhnv4      2/2     Running   0          10m
 shippingservice-9c6bbf4b-rrb8k              2/2     Running   0          10m
 ```
 
+### Удаление инфраструктуры
+
+Для удаления инфраструктуры, запускаем пайплайн, а в нем вручную запускаем Destroy Job, инфраструктура удаляется:
+![GitLab TF destroy_pipeline](/images/hw11-destroy.png)  
+![GitLab TF_destroy_job](/images/hw11-destroy-job.png)  
+
+
 ## Как проверить работоспособность:
  - см. выше
 ## PR checklist:
