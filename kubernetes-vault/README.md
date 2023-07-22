@@ -314,9 +314,10 @@ kubectl exec -it vault-test -- sh
 {"errors":["1 error occurred:\n\t* permission denied\n\n"]}
 # curl --request POST --data '{"bar": "baz"}' --header "X-Vault-Token:${TOKEN}" $VAULT_ADDR/v1/otus/otus-rw/config1
 ```
-Чтение работает, в отличии от обновления
-Вопрос: Почему мы смогли записать otus-rw/config1 но не смогли otus-rw/config ?
-Ответ: Потому что в политиках определены правила 
+Чтение работает, в отличии от обновления.  
+Вопрос: Почему мы смогли записать otus-rw/config1 но не смогли otus-rw/config?  
+Ответ: Потому что в политиках определены правила
+
 ```shell
 path "otus/otus-ro/*" {
       capabilities = ["read", "list"]
@@ -325,7 +326,7 @@ path "otus/otus-rw/*" {
       capabilities = ["read", "create", "list"]
 }
 ```
-Правила определяют что я могу создавать ключи, а менять не могу. Чтобы это исправить надо изменить правило
+Правила определяют, что я могу создавать ключи, а менять не могу. Чтобы это исправить надо изменить правило:
 ```shell
 path "otus/otus-ro/*" {
      capabilities = ["read", "list"]
