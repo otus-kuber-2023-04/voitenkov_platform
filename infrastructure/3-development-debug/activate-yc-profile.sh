@@ -14,7 +14,7 @@ else
    export TF_VAR_cloud_id=$(echo $(yc resource-manager cloud get otus-kuber --format json)|jq -r '.id')
    export TF_VAR_folder_id=$(echo $(yc resource-manager folder get dev-folder --format json)|jq -r '.id')
       
-   yc iam key create --service-account-name sa-otus-kuber-dev-tf --folder-name dev-folder --output ./secrets/key.json
+   yc iam key create --service-account-name sa-otus-kuber-dev-tf --folder-name dev-folder --output ./.secrets/key.json
    yc config profile create otus-kuber-dev
    yc config set service-account-key ./.secrets/key.json
    yc config set cloud-id $TF_VAR_cloud_id

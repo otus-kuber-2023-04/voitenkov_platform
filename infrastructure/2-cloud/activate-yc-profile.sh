@@ -2,7 +2,7 @@
 
 if $(yc config profile get otus-kuber); then 
    
-   # Activate YC CLI profile for momo-store cloud (if exists) 
+   # Activate YC CLI profile for otus-kuber cloud (if exists) 
    yc config profile activate otus-kuber
    export TF_VAR_token=$(yc config get token)
    export TF_VAR_cloud_id=$(yc config get cloud-id)
@@ -14,7 +14,7 @@ else
    yc config profile activate organization
    export TF_VAR_token=$(yc config get token)
    
-   # Create new YC CLI profile for momo-store cloud 
+   # Create new YC CLI profile for otus-kuber cloud 
    yc config profile create otus-kuber
    yc config set token $TF_VAR_token
    
