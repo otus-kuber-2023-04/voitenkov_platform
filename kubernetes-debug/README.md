@@ -45,9 +45,9 @@
 ### Kubectl-debug
 
 Оригинальный проект https://github.com/aylei/kubectl-debug остановлен в 2020 г. 
-См. релизы https://github.com/aylei/kubectl-debug/releases:
-Последняя стабильная версия 0.1.1 не поддерживает Containerd Runtime.
-В следующей (она же последняя в репозитории) версии 0.2.0-rc заявлена поддержка Containerd, но сваливается с ошибкой:
+См. релизы https://github.com/aylei/kubectl-debug/releases:  
+Последняя стабильная версия 0.1.1 не поддерживает Containerd Runtime.  
+В следующей (она же последняя в репозитории) версии 0.2.0-rc заявлена поддержка Containerd, но сваливается с ошибкой:  
 ```shell
 $ kubectl-debug nginx --agentless=false
 Forwarding from 127.0.0.1:10027 -> 10027
