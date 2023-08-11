@@ -1,9 +1,10 @@
 locals {
   cidr_internet = "0.0.0.0/0" # All IPv4 addresses.
+  subnet_name   = "subnet-${var.project}-${var.environment}-a1"
 }
 
 resource "yandex_vpc_network" "network-otus-kuber-dev" {
-  name                        = "network-${var.project}-${var.environment}"
+  name                        = local.subnet_name 
 }
 
 module "a1-subnet" {
