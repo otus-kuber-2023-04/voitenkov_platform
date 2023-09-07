@@ -15,6 +15,6 @@ spec:
       serviceAccountName: mysql-operator-sa
       containers:
         - name: mysql-operator
-          image: "voitenkov/k8s-mysql-operator:0.0.6"
+          image: "voitenkov/k8s-mysql-operator:0.0.8"
           imagePullPolicy: Always
           

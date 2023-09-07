@@ -151,3 +151,27 @@ def delete_object_make_backup(body, **kwargs):
     api.delete_persistent_volume(persistent_volume['metadata']['name'])
 
     return {'Message': "mysql-instance and its child resources deleted"}
+
+@kopf.on.update('otus.homework', 'v1', 'mysqls')
+# Функция, которая будет запускаться при изменении объектов тип MySQL:
+def mysql_on_update(body, spec, status, **kwargs):
+    name = status['mysql_on_create']['mysql-instance']
+    image = body['spec']['image']
+    password = spec.get('password', None)
+    database = body['spec']['database']
+
+    # Генерируем JSON манифесты для деплоя
+    deployment = render_template('mysql-deployment.yml.j2', {
+        'name': name,
+        'image': image,
+        'password': password,
+        'database': database})
+
+    api = kubernetes.client.CoreV1Api()
+
+    # Создаем mysql Deployment:
+    api = kubernetes.client.AppsV1Api()
+    api.patch_namespaced_deployment(name,'default', deployment)
+   
+     # Update status 
+    return {'Message': 'mysql-instance updated', 'mysql-instance': name}

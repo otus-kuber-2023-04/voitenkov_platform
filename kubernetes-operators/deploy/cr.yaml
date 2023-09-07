@@ -5,6 +5,6 @@ metadata:
 spec:
   image: mysql:5.7
   database: otus-database
-  password: otuspassword  # Так делать не нужно, следует использовать secret
+  password: otuspassword-new  # Так делать не нужно, следует использовать secret
   storage_size: 1Gi
 #usless_data: "useless info"
