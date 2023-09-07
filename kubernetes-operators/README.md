@@ -1,8 +1,8 @@
 # Выполнено ДЗ № 8
 
  - [x] 🐍 Основное ДЗ
- - [ ] 🐍 Задание со ⭐ (1)
- - [ ] 🐍 Задание сo ⭐ (2)
+ - [x] 🐍 Задание со ⭐ (1)
+ - [x] 🐍 Задание сo ⭐ (2)
 
 ## В процессе сделано:
 - кластер поднимается средствами Minikube
@@ -151,8 +151,116 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 |  1 | some data   |
 |  2 | some data-2 |
 +----+-------------+
-
 ```
+
+## 🐍 Задание со 🌟 (1)
+
+В коде mysql-operator.py добавил в код функции переменную msg в зависимости от успешности restore-job и вывод этой переменной, которая попадает в Status объекта
+```py
+    # Пытаемся восстановиться из backup
+    try:
+        api = kubernetes.client.BatchV1Api()
+        api.create_namespaced_job('default', restore_job)
+        msg = "mysql-instance created with restore-job" 
+    except kubernetes.client.rest.ApiException:
+        msg = "mysql-instance created without restore-job" 
+        pass
+
+    return {'Message': msg, 'mysql-instance': name}
+```  
+Проверяем значение `Status` экземпляра mysql:
+```shell
+$ kubectl describe mysqls.otus.homework mysql-instance
+Name:         mysql-instance
+Namespace:    default
+Labels:       <none>
+Annotations:  kopf.zalando.org/last-handled-configuration:
+                {"spec":{"database":"otus-database","image":"mysql:5.7","password":"otuspassword","storage_size":"1Gi"}}
+API Version:  otus.homework/v1
+Kind:         MySQL
+Metadata:
+  Creation Timestamp:  2023-09-07T21:37:49Z
+  Finalizers:
+    kopf.zalando.org/KopfFinalizerMarker
+  Generation:        2
+  Resource Version:  534
+  UID:               67158dd9-b2b9-4991-924d-5f71e6e8edba
+Spec:
+  Database:      otus-database
+  Image:         mysql:5.7
+  Password:      otuspassword
+  storage_size:  1Gi
+Status:
+  mysql_on_create:
+    Message:           mysql-instance created with restore-job
+    Mysql - Instance:  mysql-instance
+Events:
+  Type    Reason   Age   From  Message
+  ----    ------   ----  ----  -------
+  Normal  Logging  47s   kopf  Creation is processed: 1 succeeded; 0 failed.
+  Normal  Logging  47s   kopf  Handler 'mysql_on_create' succeeded.
+```
+
+## 🐍 Задание со 🌟 (2)
+
+Реализовал в коде контролера как обработку события обновления через декоратор `@kopf.on.update`:  
+```py
+@kopf.on.update('otus.homework', 'v1', 'mysqls')
+# Функция, которая будет запускаться при изменении объектов тип MySQL:
+def mysql_on_update(body, spec, status, **kwargs):
+    name = status['mysql_on_create']['mysql-instance']
+    image = body['spec']['image']
+    password = spec.get('password', None)
+    database = body['spec']['database']
+
+    # Генерируем JSON манифесты для деплоя
+    deployment = render_template('mysql-deployment.yml.j2', {
+        'name': name,
+        'image': image,
+        'password': password,
+        'database': database})
+
+    api = kubernetes.client.CoreV1Api()
+
+    # Создаем mysql Deployment:
+    api = kubernetes.client.AppsV1Api()
+    api.patch_namespaced_deployment(name,'default', deployment)
+   
+     # Update status 
+    return {'Message': 'mysql-instance updated', 'mysql-instance': name}
+```
+
+Проверяем, новый пароль: otuspassword-new:
+```shell
+$ kubectl apply -f deploy/cr.yaml
+mysql.otus.homework/mysql-instance configured
+
+$ kubectl describe mysqls.otus.homework mysql-instance
+Name:         mysql-instance
+Namespace:    default
+Labels:       <none>
+Annotations:  kopf.zalando.org/last-handled-configuration:
+                {"spec":{"database":"otus-database","image":"mysql:5.7","password":"otuspassword-new","storage_size":"1Gi"}}
+API Version:  otus.homework/v1
+...
+  Normal  Logging  37s  kopf  Handler 'mysql_on_update' succeeded.
+  Normal  Logging  3s   kopf  Updating is processed: 1 succeeded; 0 failed.
+  Normal  Logging  3s   kopf  Handler 'mysql_on_update' succeeded.
+```
+Проверяем пересозданный под:
+```shell
+$ kubectl describe pod/mysql-instance-7b98c99c4d-gjgbz
+Name:             mysql-instance-7b98c99c4d-gjgbz
+Namespace:        default
+...
+    State:          Running
+      Started:      Fri, 08 Sep 2023 00:42:12 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      MYSQL_ROOT_PASSWORD:  otuspassword-new      
+```
+
 ### Как проверить работоспособность:
  - см. выше
 ## PR checklist:
