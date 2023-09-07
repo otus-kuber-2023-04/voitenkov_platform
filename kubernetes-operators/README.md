@@ -1,7 +1,7 @@
 # Выполнено ДЗ № 8
 
  - [x] 🐍 Основное ДЗ
- - [ ] 🐍 Задание со ⭐ (1)
+ - [x] 🐍 Задание со ⭐ (1)
  - [ ] 🐍 Задание сo ⭐ (2)
 
 ## В процессе сделано:
@@ -151,6 +151,53 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 |  1 | some data   |
 |  2 | some data-2 |
 +----+-------------+
+
+## 🐍 Задание со 🌟 (1)
+
+В коде mysql-operator.py добавил в код функции переменную msg в зависимости от успешности restore-job и вывод этой переменной, которая попадает в Status объекта
+```py
+    # Пытаемся восстановиться из backup
+    try:
+        api = kubernetes.client.BatchV1Api()
+        api.create_namespaced_job('default', restore_job)
+        msg = "mysql-instance created with restore-job" 
+    except kubernetes.client.rest.ApiException:
+        msg = "mysql-instance created without restore-job" 
+        pass
+
+    return {'Message': msg, 'mysql-instance': name}
+```  
+Проверяем значение `Status` экземпляра mysql:
+```shell
+$ kubectl describe mysqls.otus.homework mysql-instance
+Name:         mysql-instance
+Namespace:    default
+Labels:       <none>
+Annotations:  kopf.zalando.org/last-handled-configuration:
+                {"spec":{"database":"otus-database","image":"mysql:5.7","password":"otuspassword","storage_size":"1Gi"}}
+API Version:  otus.homework/v1
+Kind:         MySQL
+Metadata:
+  Creation Timestamp:  2023-09-07T21:37:49Z
+  Finalizers:
+    kopf.zalando.org/KopfFinalizerMarker
+  Generation:        2
+  Resource Version:  534
+  UID:               67158dd9-b2b9-4991-924d-5f71e6e8edba
+Spec:
+  Database:      otus-database
+  Image:         mysql:5.7
+  Password:      otuspassword
+  storage_size:  1Gi
+Status:
+  mysql_on_create:
+    Message:           mysql-instance created with restore-job
+    Mysql - Instance:  mysql-instance
+Events:
+  Type    Reason   Age   From  Message
+  ----    ------   ----  ----  -------
+  Normal  Logging  47s   kopf  Creation is processed: 1 succeeded; 0 failed.
+  Normal  Logging  47s   kopf  Handler 'mysql_on_create' succeeded.
 
 ```
 ### Как проверить работоспособность:
