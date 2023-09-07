@@ -2,6 +2,7 @@ import kopf
 import yaml
 import kubernetes
 import time
+import logging
 from jinja2 import Environment, FileSystemLoader
 from yaml.loader import SafeLoader
 
@@ -53,6 +54,7 @@ def mysql_on_create(body, spec, **kwargs):
     password = body['spec']['password']
     database = body['spec']['database']
     storage_size = body['spec']['storage_size']
+    logging.info(f"A handler is called with body: {body}")
 
     # Генерируем JSON манифесты для деплоя
     persistent_volume = render_template('mysql-pv.yml.j2',
@@ -116,9 +118,13 @@ def mysql_on_create(body, spec, **kwargs):
     try:
         api = kubernetes.client.BatchV1Api()
         api.create_namespaced_job('default', restore_job)
+        msg = "mysql-instance created with restore-job" 
     except kubernetes.client.rest.ApiException:
+        msg = "mysql-instance created without restore-job" 
         pass
 
+    # Update status 
+    return {'Message': msg, 'mysql-instance': name}
 
 @kopf.on.delete('otus.homework', 'v1', 'mysqls')
 def delete_object_make_backup(body, **kwargs):
@@ -144,4 +150,4 @@ def delete_object_make_backup(body, **kwargs):
     api = kubernetes.client.CoreV1Api()
     api.delete_persistent_volume(persistent_volume['metadata']['name'])
 
-    return {'message': "mysql and its children resources deleted"}
+    return {'Message': "mysql-instance and its child resources deleted"}

@@ -55,6 +55,7 @@ spec:
               type: object
             # назначение ключа объекта yaml .status (пустой объект)
             status:
+              x-kubernetes-preserve-unknown-fields: true
               description: MySQLStatus defines the observed state of MySQL
               type: object
           type: object
