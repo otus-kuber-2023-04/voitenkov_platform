@@ -37,11 +37,13 @@
 
 ### Создание кластера Kubernetes v1.28.0 с использованием kubeadm
 
+https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s.yml.tftpl
+
 Для подготовки машин я вставил все необходимые команды в свой Userdata файл для Cloud-Init, который используется при разворачивании ВМ Terraform'ом:
 - Для подготовки ВМ к установке кластера Kubernetes:  
-[https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/infrastructure/templates/ubuntu-k8s-kubespray.yml.tftpl](https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s-kubespray.yml.tftpl)
-- И добавил команды установки Ansible + Kubespray с зависимостями в Bootstrap ВМ:  
-[https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/infrastructure/templates/ubuntu-k8s-bootstrap.yml.tftpl](https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s-bootstrap.yml.tftpl)
+https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s.yml.tftpl
+- Для подготовки ВМ, управляющей развертыванием кластера:  
+https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-devops.yml.tftpl
 
 Создадим настроим мастер ноду при помощи kubeadm, для этого на ней выполним:
 ```shell
@@ -211,6 +213,12 @@ sudo apt-mark unhold kubeadm && sudo apt-get update && sudo apt-get install -y k
 ### Автоматическое развертывание кластеров
 
 Выполняю сразу задание со ⭐ Выполните установку кластера с 3 master-нодами и 2 worker-нодами.
+
+Для подготовки машин я вставил все необходимые команды в свой Userdata файл для Cloud-Init, который используется при разворачивании ВМ Terraform'ом:
+- Для подготовки ВМ к установке кластера Kubernetes:  
+[https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/infrastructure/templates/ubuntu-k8s-kubespray.yml.tftpl](https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s-kubespray.yml.tftpl)
+- И добавил команды установки Ansible + Kubespray с зависимостями в Bootstrap ВМ:  
+[https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/infrastructure/templates/ubuntu-k8s-bootstrap.yml.tftpl](https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s-bootstrap.yml.tftpl)
 
 Использую Kubespray, все настройки дефолтные, за исключением того, что включил Flannel CNI.
 Конфигурация узлов:  
