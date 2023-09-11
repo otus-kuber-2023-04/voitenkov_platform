@@ -1,0 +1,40 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - fish
+  - gnupg
+  - lsb-release
+  - mc
+  - net-tools
+  - python3.10-venv
+
+users:
+  - default
+  - name: ansible
+    primary_group: ansible
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+ 
+runcmd:
+  - curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg # Download the Google Cloud public signing key:
+  - curl https://baltocdn.com/helm/signing.asc | sudo gpg --dearmor -o /usr/share/keyrings/helm.gpg # Add Helm public GPG key
+  - echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list # Add the Kubernetes apt repository
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+  - sudo apt-get update -y
+  - sudo apt-get install -y kubectl helm
+  - git clone https://github.com/kubernetes-sigs/kubespray.git
+  - VENVDIR=kubespray-venv
+  - KUBESPRAYDIR=kubespray
+  - python3 -m venv $VENVDIR
+  - source $VENVDIR/bin/activate
+  - cd $KUBESPRAYDIR
+  - pip install -U -r requirements.txt
+  - cp -rfp inventory/sample inventory/mycluster
+
