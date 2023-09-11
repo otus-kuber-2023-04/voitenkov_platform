@@ -37,8 +37,6 @@
 
 ### Создание кластера Kubernetes v1.28.0 с использованием kubeadm
 
-https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s.yml.tftpl
-
 Для подготовки машин я вставил все необходимые команды в свой Userdata файл для Cloud-Init, который используется при разворачивании ВМ Terraform'ом:
 - Для подготовки ВМ к установке кластера Kubernetes:  
 https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/infrastructure/templates/ubuntu-k8s.yml.tftpl
