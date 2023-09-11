@@ -220,8 +220,8 @@ master3 - etcd
 worker1 - node  
 worker2 - node
 
-Файл инвентаризации https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/inventory.ini. 
-
+Файл инвентаризации [https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/inventory.ini. 
+](https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-production-clusters/kubernetes-production-clusters/inventory.ini)
 `ansible-playbook -i inventory/mycluster/inventory.ini --become --become-user=root --user=ansible cluster.yaml`
 
 Время установки - 20 минут. Результаты:
