@@ -323,7 +323,45 @@ hipster-shop --set frontend.service.NodePort=31234
 
 ### Задание сo ⭐ (community charts)
 
-Не выполнено пока.
+Добавим в Chart hipster-shop зависимость, например Redis:
+```shell
+dependencies:
+  - name: redis
+    version: 17.11.5
+    repository: https://charts.bitnami.com/bitnami
+```
+
+Обновляем зависимости с учетом Redis:
+```shell
+helm dep update hipster-shop
+Getting updates for unmanaged Helm repositories...
+...Successfully got an update from the "https://charts.bitnami.com/bitnami" chart repository
+Hang tight while we grab the latest from your chart repositories...
+...
+Update Complete. ⎈Happy Helming!⎈
+Saving 2 charts
+Downloading redis from repo https://charts.bitnami.com/bitnami
+Deleting outdated charts
+```
+Обновляем чарт:
+```shell
+helm upgrade --install hipster-shop kubernetes-templating/hipster-shop --namespace hipster-shop
+```
+
+Видим новый микросервис redis-cart:
+```shell
+$ k get all -n hipster-shop | grep redis-cart
+pod/redis-cart-7667674fc7-4bxbv              1/1     Running            0          7m56s
+pod/redis-cart-master-d77d9db6-vhdl7         1/1     Running            0          72s
+service/redis-cart              ClusterIP   10.112.204.239   <none>        6379/TCP       7m56s
+service/redis-cart-headless     ClusterIP   None             <none>        6379/TCP       73s
+service/redis-cart-master       ClusterIP   10.112.130.216   <none>        6379/TCP       73s
+deployment.apps/redis-cart              1/1     1            1           7m56s
+deployment.apps/redis-cart-master       1/1     1            1           72s
+replicaset.apps/redis-cart-7667674fc7              1         1         1       7m56s
+replicaset.apps/redis-cart-master-d77d9db6         1         1         1       72s
+```
+
 
 ### Необязательное задание (helm secrets)
 
