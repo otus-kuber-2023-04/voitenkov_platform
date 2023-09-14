@@ -65,8 +65,6 @@ Cервис, позволяющий динамически генерирова�
 ```shell
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo update
-$ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.crds.yaml
-$ kubectl label namespace cert-manager certmanager.k8s.io/disable-validation="true" 
 $ helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.12.0 --set installCRDs=true
 
 NAME: cert-manager
@@ -77,6 +75,8 @@ REVISION: 1
 TEST SUITE: None
 NOTES:
 cert-manager v1.12.0 has been deployed successfully!
+
+$ kubectl label namespace cert-manager certmanager.k8s.io/disable-validation="true" 
 ```
 Настроил CR для cert-manager по инструкции https://cert-manager.io/docs/tutorials/acme/nginx-ingress/ 
 В документации описывают ClusterIssues и Issues. Создаем
@@ -164,8 +164,45 @@ chartmuseum     chartmuseum     1               2023-06-11 22:29:04.860949766 +0
 ![chartmuseum](/images/hw09-chartmuseum.png)  
 
 #### Задание со ⭐ (chartmuseum)
- 
-Не выполнено пока.
+
+Для того, чтобы можно было пользоваться развернутым chartmuseum репозиторием, надо добавить в values разрешение на обработку маршрутов /api:
+```shell
+env:
+  open:
+    # disable all routes prefixed with /api
+    DISABLE_API: false
+```
+
+Возьмем чарт микросервиса frontend, запакуем:
+```shell
+cd kubernetes-templating
+helm package frontend
+```
+и отправим в наш chartmuseum репозиторий:
+```shell
+$ curl --data-binary "@frontend-0.1.1.tgz" https://chartmuseum.k8s-dev.voytenkov.ru/api/charts
+{"saved":true}
+```
+Добавим развернутый ранее chartmuseum в качестве Helm репозитория:
+`helm repo add my-chartmuseum https://chartmuseum.k8s-dev.voytenkov.ru/`
+
+Поиск по репозиторию - увидим, что загруженный чарт появился (если нет, то стоит сделать helm repo update):
+```shell
+$ helm search repo my-chartmuseum/
+NAME                    CHART VERSION   APP VERSION     DESCRIPTION
+my-chartmuseum/frontend 0.1.1           1.16.0          A Helm chart for Kubernetes
+```
+
+Для установки чарта запустить:
+```shell
+$ helm install frontend my-chartmuseum/frontend
+NAME: frontend
+LAST DEPLOYED: Thu Sep 14 22:25:08 2023
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
 
 #### Harbor
 
