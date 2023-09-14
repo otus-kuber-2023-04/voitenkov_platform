@@ -183,7 +183,7 @@ helm package frontend
 $ curl --data-binary "@frontend-0.1.1.tgz" https://chartmuseum.k8s-dev.voytenkov.ru/api/charts
 {"saved":true}
 ```
-Добавим развернутый ранее chartmuseum в качестве Helm репозитория:
+Добавим развернутый ранее chartmuseum в качестве Helm репозитория:  
 `helm repo add my-chartmuseum https://chartmuseum.k8s-dev.voytenkov.ru/`
 
 Поиск по репозиторию - увидим, что загруженный чарт появился (если нет, то стоит сделать helm repo update):
