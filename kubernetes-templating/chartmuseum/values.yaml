@@ -10,3 +10,7 @@ ingress:
       path: /
       tls: true
       tlsSecret: chartmuseum.k8s-dev.voytenkov.ru
+env:
+  open:
+    # disable all routes prefixed with /api
+    DISABLE_API: false

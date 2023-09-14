@@ -1,6 +1,9 @@
 data "yandex_vpc_subnet" "subnet" {
   name           = var.subnet_name 
+
+ depends_on      = [yandex_vpc_subnet.subnet]
 } 
+
 
 resource "yandex_vpc_subnet" "subnet" {
   name           = var.subnet_name

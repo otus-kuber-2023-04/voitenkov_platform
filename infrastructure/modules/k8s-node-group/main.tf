@@ -9,7 +9,13 @@ resource "yandex_kubernetes_node_group" "k8s-node-group" {
   description = local.k8s_node_group_description
   cluster_id  = var.k8s_node_group_cluster_id
   version     = var.k8s_node_group_version
-
+  
+  node_labels = {
+    "node-group" = var.k8s_node_group_name
+  }
+  
+  node_taints = var.k8s_node_group_node_taints
+  
   scale_policy {
     auto_scale {
       initial = var.k8s_node_group_auto_scale_initial
