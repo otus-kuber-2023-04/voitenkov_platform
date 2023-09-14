@@ -1,11 +1,11 @@
 # Выполнено ДЗ № 9
 
  - [x] Основное ДЗ
- - [ ] Задание со ⭐ (chartmuseum)
+ - [x] Задание со ⭐ (chartmuseum)
  - [x] Задание сo ⭐ (helmfile)
- - [ ] Задание сo ⭐ (community charts)
- - [ ] Необязательное задание (helm secrets)
- - [ ] Задание сo ⭐ (jsonnet другие решения)
+ - [x] Задание сo ⭐ (community charts)
+ - [x] Необязательное задание (helm secrets)
+ - [x] Задание сo ⭐ (jsonnet другие решения)
 
 ## В процессе сделано:
 
@@ -365,7 +365,64 @@ replicaset.apps/redis-cart-master-d77d9db6         1         1         1       7
 
 ### Необязательное задание (helm secrets)
 
-Не выполнено пока.
+Установим sops и helm-secrets:
+```shell
+$ go install go.mozilla.org/sops/v3/cmd/sops@latest
+$ helm plugin install https://github.com/jkroepke/helm-secrets --version v3.12.0
+Installed plugin: secrets
+```
+
+Сгенерируем новый PGP ключ:
+```shell
+gpg --full-generate-key
+```
+Просмотр ключей:
+```shell
+$ gpg -k
+gpg: checking the trustdb
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+/home/andy/.gnupg/pubring.kbx
+-----------------------------
+pub   rsa3072 2023-09-14 [SC]
+      9A2AD.........48EC2
+uid           [ultimate] andrey (otus rules!) <voytenkov@inbox.ru>
+sub   rsa3072 2023-09-14 [E]
+
+создал secrets.yaml
+зашифровал:
+```shell
+$ sops -e -i --pgp 9A2AD.........48EC2 secrets.yaml
+[PGP]    WARN[0000] Deprecation Warning: GPG key fetching from a keyserver within sops will be removed in a future version of sops. See https://github.com/mozilla/sops/issues/727 for more information.
+```
+Проверил что файл зашифрован:
+```shell
+$ cat secrets.yaml
+visibleKey: ENC[AES256_GCM,data:EmcDJ2tid8wb/D0=,iv:dVqPp6XkHY5qxhz2bwgh2Ca/fzliDYQ+XRGQpY+Ck2Q=,tag:iGEMBrzp/LBu7goGupGa4w==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2023-09-14T21:21:34Z"
+    mac: ENC[AES256_GCM,data:KXGKOMs+xeB2d2pzRbpFACr1uvrmMPQ
+...
+            =fnXu
+            -----END PGP MESSAGE-----
+          fp: 9A2ADCD510A680FAD264750DC772CC4F5B548EC2
+    unencrypted_suffix: _unencrypted
+    version: 3.7.3
+```
+    
+Cоздал манифест с вызовом к секрету:  
+`$ helm secrets upgrade --install frontend frontend --namespace hipster-shop -f frontend/values.yaml -f frontend/secrets.yaml`
+
+Проверьте, что секрет создан, и его содержимое соответствует нашим ожиданиям: **сделано**  
+Предложите способ использования плагина helm-secrets в CI/CD:  
+**расшифровка паролей и других чувствительных данных, хранящихся в git-репозитории, хотя лучше использовать такие решения, как Hashicorp Vault.**  
+Про что необходимо помнить, если используем helm-secrets (например, как обезопасить себя от коммита файлов с секретами, которые забыл зашифровать)?  
+**нешифрованные файлы именовать по специальному шаблону, который держать в .gitignore. После шифрования файлы сохранять с именем, не подпадающим под шаблон.**
 
 ### Создание репозитория Harbor
 
@@ -418,7 +475,242 @@ INFO  Creating deployments shippingservice
 
 ### Задание сo ⭐ (jsonnet другие решения)
 
-Не выполнено пока.
+Попробуем qbec. Создадим demo-приложение:
+```shell
+qbec init qbec --with-example
+using server URL "https://84.252.128.16" and default namespace "default" for the default environment
+wrote qbec/params.libsonnet
+wrote qbec/environments/base.libsonnet
+wrote qbec/environments/default.libsonnet
+wrote qbec/components/hello.jsonnet
+wrote qbec/qbec.yaml
+```
+Заменим в демо-приложении hello.jsonnet на services.jsonnet и подправим переменные в конфигурационных файлах demo, чтобы они соответствовали нашим микросервисам.
+Проверяем:
+```shell
+$ qbec show default
+1 components evaluated in 9ms
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    qbec.io/component: services
+  labels:
+    name: paymentservice
+    qbec.io/application: qbec-test
+    qbec.io/environment: default
+  name: paymentservice
+spec:
+  minReadySeconds: 30
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: paymentservice
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        name: paymentservice
+    spec:
+      containers:
+      - args: []
+        env:
+        - name: PORT
+          value: "50051"
+        image: gcr.io/google-samples/microservices-demo/paymentservice:v0.1.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        name: server
+        ports:
+        - containerPort: 50051
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 10001
+        stdin: false
+        tty: false
+        volumeMounts: []
+      imagePullSecrets: []
+      initContainers: []
+      terminationGracePeriodSeconds: 30
+      volumes: []
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    qbec.io/component: services
+  labels:
+    name: shippingservice
+    qbec.io/application: qbec-test
+    qbec.io/environment: default
+  name: shippingservice
+spec:
+  minReadySeconds: 30
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: shippingservice
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        name: shippingservice
+    spec:
+      containers:
+      - args: []
+        env:
+        - name: PORT
+          value: "50051"
+        image: gcr.io/google-samples/microservices-demo/shippingservice:v0.1.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        name: server
+        ports:
+        - containerPort: 50051
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+          initialDelaySeconds: 20
+          periodSeconds: 15
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 10001
+        stdin: false
+        tty: false
+        volumeMounts: []
+      imagePullSecrets: []
+      initContainers: []
+      terminationGracePeriodSeconds: 30
+      volumes: []
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    qbec.io/component: services
+  labels:
+    name: paymentservice
+    qbec.io/application: qbec-test
+    qbec.io/environment: default
+  name: paymentservice
+spec:
+  ports:
+  - name: grpc
+    port: 50051
+    targetPort: 5051
+  selector:
+    name: paymentservice
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    qbec.io/component: services
+  labels:
+    name: shippingservice
+    qbec.io/application: qbec-test
+    qbec.io/environment: default
+  name: shippingservice
+spec:
+  ports:
+  - name: grpc
+    port: 50051
+    targetPort: 5051
+  selector:
+    name: shippingservice
+  type: ClusterIP
+```
+
+Деплоим:
+```shell
+$ qbec apply default
+setting cluster to yc-managed-k8s-cat9qin15kkpl904lp72
+setting context to yc-k8s-otus-kuber-stage-cluster-1
+cluster metadata load took 979ms
+1 components evaluated in 20ms
+
+will synchronize 4 object(s)
+
+Do you want to continue [y/n]: y
+1 components evaluated in 7ms
+create deployments paymentservice -n hipster-shop (source services)
+create deployments shippingservice -n hipster-shop (source services)
+create services paymentservice -n hipster-shop (source services)
+create services shippingservice -n hipster-shop (source services)
+waiting for deletion list to be returned
+server objects load took 1.04s
+---
+stats:
+  created:
+  - deployments paymentservice -n hipster-shop (source services)
+  - deployments shippingservice -n hipster-shop (source services)
+  - services paymentservice -n hipster-shop (source services)
+  - services shippingservice -n hipster-shop (source services)
+
+waiting for readiness of 2 objects
+  - deployments paymentservice -n hipster-shop
+  - deployments shippingservice -n hipster-shop
+
+  0s    : deployments shippingservice -n hipster-shop :: 0 of 1 updated replicas are available
+  0s    : deployments paymentservice -n hipster-shop :: 0 of 1 updated replicas are available
+✓ 1m0s  : deployments paymentservice -n hipster-shop :: successfully rolled out (1 remaining)
+✓ 1m0s  : deployments shippingservice -n hipster-shop :: successfully rolled out (0 remaining)
+
+✓ 1m0s: rollout complete
+command took 1m5.11s
+```
 
 ### Kustomize
 
