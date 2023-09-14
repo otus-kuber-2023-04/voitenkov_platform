@@ -4,8 +4,8 @@ local base = import './base.libsonnet';
 
 base {
   components +: {
-    hello +: {
-      indexData: 'hello default\n',
+    services +: {
+      indexData: 'services default\n',
       replicas: 2,
     },
   }
