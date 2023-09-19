@@ -1,0 +1,10 @@
+apiVersion: qbec.io/v1alpha1
+kind: App
+metadata:
+  name: qbec-test
+spec:
+  environments:
+    default:
+      defaultNamespace: hipster-shop
+      server: https://84.252.128.16
+  vars: {}
