@@ -2,8 +2,8 @@
 
  - [x] Основное ДЗ
  - [ ] Задание со ⭐ - issue с дублирующимися полями уже пофиксено и в текушей версии приложения не воспроизводится
- - [ ] Задание сo ⭐ (audit logging)
- - [x] Задание сo ⭐ (host logging)
+ - [ ] Задание сo ⭐ (audit logging) - не довел до конца
+ - [ ] Задание сo ⭐ (host logging)
 
 ## В процессе сделано:
 
@@ -185,6 +185,8 @@ $ helm upgrade --install fluent-bit fluent/fluent-bit -n observability --atomic
 **Fluent-bit** сконфигурирован на прием логов из кластера Kubernetes и на отправку их в Elasticsearch. Логи микросервисов Hipster-shop можно посмотреть в Kibana:
 ![Kubernetes logs](/images/hw10-kibana-logs2.png)
 
+### Задание со ⭐
+
 Описанная в методичке прблема с дубликатами полей не проявляется уже, так как давно исправлена.
 
 ### Мониторинг ElasticSearch
@@ -348,6 +350,19 @@ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n 
 Cоздадим свой дэшборд для Nginx Ingress:
 
 ![grafana-loki](/images/hw10-grafana-nginx.png)
+
+### Задание сo ⭐ (audit logging)
+
+Используем решение **Yandex.Cloud Security Solution Library** по сбору аудит-логов с кластера Kubernetes и отправки их в Elasticsearch (ELK):  
+https://github.com/yandex-cloud/yc-solution-library-for-security/blob/master/auditlogs/export-auditlogs-to-ELK_k8s/README.md  
+Решение развернул, логи экспортируются, но оно заточено на Yandex Managed Service for Elasticsearch и в развернутый чартами в кластере Elasticsearch не попадают. Требуется переработка данного решения в части интеграции с собственным (не в виде Managed Service) Elasticsearch.
+
+Пример сгенерированного для FALCO события безопасности, экспортированного в **Yandex Cloud Logging**:
+![cloud-logging](/images/hw10-cloud-logging.png)
+
+### Задание сo ⭐ (host logging)
+
+Не делал.
 
 ## Как проверить работоспособность:
  - см. выше
