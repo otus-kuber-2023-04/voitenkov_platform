@@ -45,8 +45,7 @@
 
 ```shell
 $ kubectl apply -f https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-02/Logging/microservices-demo-without-resources.yaml -n microservices-demo
-                 https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-04/05-Templating/hipster-shop-jsonnet/services.jsonnet
-
+            
 $ kubectl get nodes
 NAME                        STATUS   ROLES    AGE   VERSION
 cl15meagv87pu1svnhq5-axif   Ready    <none>   49m   v1.24.8
