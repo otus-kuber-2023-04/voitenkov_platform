@@ -433,10 +433,7 @@ replicaset.apps/istio-operator-97fb74554   1         1         1       108s
 ```
 $ helm repo add flagger https://flagger.app
 $ kubectl apply -f https://raw.githubusercontent.com/weaveworks/flagger/master/artifacts/flagger/crd.yaml
-$ helm upgrade --install flagger flagger/flagger \
-    --namespace=istio-system \
-    --set crd.create=false \
-    --set meshProvider=istio \
+$ helm upgrade --install flagger flagger/flagger --namespace=istio-system --set crd.create=false --set meshProvider=istio --set metricsServer=http://prometheus:9090
 ```
 
 #### Istio sidecar injector 
