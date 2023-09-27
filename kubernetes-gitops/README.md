@@ -3,7 +3,7 @@
  - [x] Основное ДЗ
  - [x] Задание со ⭐ (Подготовка Kubernetes кластера)
  - [x] Задание сo ⭐ (Continuous Integration)
- - [ ] Задание сo ⭐ (Установка Istio)
+ - [x] Задание сo ⭐ (Установка Istio)
  - [ ] Дополнительное задание сo ⭐ (Flagger еще один микросервис)
  - [ ] Дополнительное задание сo ⭐ (Flagger нотификации в Slack)
  - [ ] Дополнительное задание сo ⭐ (Инфраструктурный репозиторий)
@@ -403,6 +403,29 @@ $ curl -L https://istio.io/downloadIstio | sh -
 $ cd istio-1.6.2/bin/
 $ sudo cp istioctl /usr/local/bin/
 $ istioctl manifest apply --set profile=demo
+```
+### Установка Istio | Задание со ⭐
+
+Реализуйте установку Istio альтернативным способом:
+установка с помощью Istio-operator.
+```shell
+$ istioctl operator init
+Installing operator controller in namespace: istio-operator using image: docker.io/istio/operator:1.18.1
+Operator controller will watch namespaces: istio-system
+✔ Istio operator installed
+✔ Installation complete
+$ kubectl get all -n istio-operator
+NAME                                 READY   STATUS    RESTARTS   AGE
+pod/istio-operator-97fb74554-c2qwt   1/1     Running   0          108s
+
+NAME                     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/istio-operator   ClusterIP   10.112.231.162   <none>        8383/TCP   108s
+
+NAME                             READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/istio-operator   1/1     1            1           108s
+
+NAME                                       DESIRED   CURRENT   READY   AGE
+replicaset.apps/istio-operator-97fb74554   1         1         1       108s
 ```
 
 #### Установка Flagger
