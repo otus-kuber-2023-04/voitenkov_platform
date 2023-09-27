@@ -558,7 +558,23 @@ shippingservice-9c6bbf4b-rrb8k              2/2     Running   0          10m
 ### Flagger | Задание со ⭐️
 Реализуйте канареечное развертывание для одного из оставшихся микросервисов. Опишите сложности с которыми пришлось столкнуться в PR и соответствующим образом модифицируйте файлы в GitLab репозитории.
 
-Попытался, но возникли сложности с генерацией нагрузки на GRPC порт. Имеющиеся инструменты работают с HTTP. В другой раз, может быть.
+Берем сервис adservice. Так как он и все остальные сервисы работают по gRPC, в CRD canary для этого сервиса указываем `portName: grpc`. И наш Loadgenerator уже не подходит. Деплоим loadgenerator от Flagger:
+```shell
+helm upgrade -i flagger-loadtester flagger/loadtester --namespace=istio-system --set cmd.timeout=1h --set cmd.namespaceRegexp=''
+```
+Однако, нагрузка пока не идет:
+```shell
+Events:
+  Type     Reason  Age                    From     Message
+  ----     ------  ----                   ----     -------
+  Normal   Synced  107s                   flagger  New revision detected! Scaling up adservice.microservices-demo
+  Warning  Synced  77s                    flagger  canary deployment adservice.microservices-demo not ready: waiting for rollout to finish: 0 of 1 (readyThreshold 100%) updated replicas are available
+  Normal   Synced  47s                    flagger  Starting canary analysis for adservice.microservices-demo
+  Normal   Synced  47s                    flagger  Advance adservice.microservices-demo canary weight 5
+  Warning  Synced  17s                    flagger  Halt advancement no values found for istio metric request-success-rate probably adservice.microservices-demo is not receiving traffic: running query failed: no values found
+```
+Дальше не разбирался. Там еще с метриками будет вопрос.
+
 
 ### Удаление инфраструктуры
 
