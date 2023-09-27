@@ -433,7 +433,7 @@ replicaset.apps/istio-operator-97fb74554   1         1         1       108s
 ```
 $ helm repo add flagger https://flagger.app
 $ kubectl apply -f https://raw.githubusercontent.com/weaveworks/flagger/master/artifacts/flagger/crd.yaml
-$ helm upgrade --install flagger flagger/flagger --namespace=istio-system --set crd.create=false --set meshProvider=istio --set metricsServer=http://prometheus:9090
+$ helm upgrade --install flagger flagger/flagger --namespace=istio-system --set crd.create=false --set meshProvider=istio --set metricsServer=http://prometheus.monitoring.svc.cluster.local:9090
 ```
 
 #### Istio sidecar injector 
@@ -512,7 +512,7 @@ kubectl get pods -n microservices-demo -l app=frontend-primary
 NAME                                       READY   STATUS    RESTARTS   AGE
 frontend-hipster-primary-c694675f4-6q5dk   2/2     Running   0          116s
 ```
-В файле я убрал метрики request-duration. Для loadbalancer был выставлен publicIP.
+Для loadbalancer был выставлен publicIP.
 Также для успешности релиза надо было настроить Loadgenerator микросервис на внешний IP Frontend.
 
 Выкатываем новую версию и ждем. Через какое-то время:
@@ -554,6 +554,11 @@ productcatalogservice-846756b974-cbrx5      2/2     Running   0          10m
 recommendationservice-58cb799b76-rhnv4      2/2     Running   0          10m
 shippingservice-9c6bbf4b-rrb8k              2/2     Running   0          10m
 ```
+
+### Flagger | Задание со ⭐️
+Реализуйте канареечное развертывание для одного из оставшихся микросервисов. Опишите сложности с которыми пришлось столкнуться в PR и соответствующим образом модифицируйте файлы в GitLab репозитории.
+
+Попытался, но возникли сложности с генерацией нагрузки на GRPC порт. Имеющиеся инструменты работают с HTTP. В другой раз, может быть.
 
 ### Удаление инфраструктуры
 
