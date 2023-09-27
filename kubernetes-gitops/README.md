@@ -531,6 +531,7 @@ Events:
   Normal   Synced  4m30s            flagger  Advance frontend.microservices-demo canary weight 20
   Normal   Synced  3m               flagger  Advance frontend.microservices-demo canary weight 25
   Normal   Synced  2m30s            flagger  Advance frontend.microservices-demo canary weight 30
+  Normal   Synced  2m               flagger  Copying frontend.microservices-demo template spec to frontend-primary.microservices-demo
   Normal   Synced  1m (x3 over 7m)  flagger  (combined from similar events): Promotion completed! Scaling down frontend-hipster.microservices-demo
 
 $ kubectl get canaries -n microservices-demo 
