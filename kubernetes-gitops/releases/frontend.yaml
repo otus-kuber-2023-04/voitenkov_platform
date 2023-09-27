@@ -17,4 +17,4 @@ spec:
   values:
     image:
       repository: registry.gitlab.com/voitenkov/microservices-demo/frontend # {"$imagepolicy": "flux-system:frontend:name"}
-      tag: 0.0.209 # {"$imagepolicy": "flux-system:frontend:tag"}
+      tag: 0.0.354 # {"$imagepolicy": "flux-system:frontend:tag"}

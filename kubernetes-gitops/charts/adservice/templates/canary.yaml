@@ -1,0 +1,33 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: adservice
+  namespace: microservices-demo
+spec:
+  provider: istio
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: adservice
+  progressDeadlineSeconds: 60
+  service:
+    port: 9555
+    targetPort: 9555
+    portName: grpc
+    trafficPolicy:
+      tls:
+        mode: DISABLE
+  analysis:
+    interval: 30s
+    threshold: 5
+    maxWeight: 30
+    stepWeight: 5
+    metrics:
+    - name: request-success-rate
+      threshold: 99
+      interval: 30s
+    webhooks:
+    - name: load-test
+      url:  http://flagger-loadtester.istio-system/
+      metadata:
+        cmd: "ghz -z 1m -q 10 -c 2 --insecure adservice.microservices-demo.svc.cluster.local:9555/"
