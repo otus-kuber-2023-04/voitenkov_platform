@@ -1,7 +1,7 @@
 # Выполнено ДЗ № 12
 
  - [x] Основное ДЗ
- - [ ] Задание со ⭐ (Реализовать доступ к Vault через https)
+ - [x] Задание со ⭐ (Реализовать доступ к Vault через https)
  - [ ] Задание сo ⭐ (Настроить autounseal)
  - [ ] Задание сo ⭐ (Настроить lease временных секретов для доступа к БД)
  
@@ -444,6 +444,92 @@ revocation_time            1690063265
 revocation_time_rfc3339    2023-07-22T22:01:05.170178347Z
 state                      revoked
 ```
+
+## Задание со ⭐ Реализовать доступ к Vault через https
+
+Выполняем все действия согласно инструкции [https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-tls](https://developer.hashicorp.com/vault/tutorials/kubernetes/kubernetes-minikube-tls)  
+Получаем кластер Vault с включенным TLS:  
+```shell
+$ kubectl exec -n $VAULT_K8S_NAMESPACE vault-0 -- vault operator raft list-peers
+Node       Address                        State       Voter
+----       -------                        -----       -----
+vault-0    vault-0.vault-internal:8201    leader      true
+vault-1    vault-1.vault-internal:8201    follower    true
+vault-2    vault-2.vault-internal:8201    follower    true
+
+$ kubectl exec -n $VAULT_K8S_NAMESPACE vault-0 -- vault status
+Key                     Value
+---                     -----
+Seal Type               shamir
+Initialized             true
+Sealed                  false
+Total Shares            1
+Threshold               1
+Version                 1.14.0
+Build Date              2023-06-19T11:40:23Z
+Storage Type            raft
+Cluster Name            vault-cluster-73f4af4c
+Cluster ID              e363c282-b282-2f1d-a354-5c5318840b8b
+HA Enabled              true
+HA Cluster              https://vault-0.vault-internal:8201
+HA Mode                 active
+Active Since            2023-10-05T22:36:32.066881126Z
+Raft Committed Index    40
+Raft Applied Index      40
+
+```
+Сохраням секрет:
+```shell
+$ kubectl exec -n $VAULT_K8S_NAMESPACE -it vault-0 -- /bin/sh
+/ $ vault secrets enable -path=secret kv-v2
+Success! Enabled the kv-v2 secrets engine at: secret/
+/ $ vault kv put secret/tls/apitest username="apiuser" password="supersecret"
+===== Secret Path =====
+secret/data/tls/apitest
+
+======= Metadata =======
+Key                Value
+---                -----
+created_time       2023-10-05T22:44:01.738625233Z
+custom_metadata    <nil>
+deletion_time      n/a
+destroyed          false
+version            1
+/ $ vault kv get secret/tls/apitest
+===== Secret Path =====
+secret/data/tls/apitest
+
+======= Metadata =======
+Key                Value
+---                -----
+created_time       2023-10-05T22:44:01.738625233Z
+custom_metadata    <nil>
+deletion_time      n/a
+destroyed          false
+version            1
+
+====== Data ======
+Key         Value
+---         -----
+password    supersecret
+username    apiuser
+/ $ exit
+```
+
+Читаем секрет:  
+```shell
+$ curl --cacert $WORKDIR/vault.ca \
+   --header "X-Vault-Token: $CLUSTER_ROOT_TOKEN" \
+   https://127.0.0.1:8200/v1/secret/data/tls/apitest | jq .data.data
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   347  100   347    0     0   2139      0 --:--:-- --:--:-- --:--:--  2155
+{
+  "password": "supersecret",
+  "username": "apiuser"
+}
+```
+
 ### Удаление инфраструктуры
 
 Для удаления **Production** инфраструктуры, запускаем пайплайн, а в нем вручную запускаем Destroy Job, инфраструктура удаляется.
