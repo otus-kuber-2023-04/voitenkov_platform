@@ -2,8 +2,8 @@
 
  - [x] Основное ДЗ
  - [x] Задание со ⭐ (Реализовать доступ к Vault через https)
- - [ ] Задание сo ⭐ (Настроить autounseal)
- - [ ] Задание сo ⭐ (Настроить lease временных секретов для доступа к БД)
+ - [x] Задание сo ⭐ (Настроить autounseal)
+ - [x] Задание сo ⭐ (Настроить lease временных секретов для доступа к БД)
  
 
 ## В процессе сделано:
@@ -529,6 +529,193 @@ $ curl --cacert $WORKDIR/vault.ca \
   "username": "apiuser"
 }
 ```
+
+## Задание сo ⭐ (Настроить autounseal)
+
+Настраиваем провайдера autounseal в Yandex Cloud, действуем по инструкции [https://cloud.yandex.ru/docs/kms/tutorials/vault-secret#setup](https://cloud.yandex.ru/docs/kms/tutorials/vault-secret#setup)  
+Терраформом деплоим симметричный ключа KMS, сохраняем его ID. Также деплоим сервисный аккаунт с правами kms.keys.encrypterDecrypter и создаем для него IAM-key.
+Создаем из IAM-key секрет в Kubernetes:  
+`kubectl create secret generic vault-yc-kms  -n vault  --from-file=key.json= ./.secrets/vault-key.json`  
+Добавляем в конфигурацию Vault параметры autounseal:
+```shell
+seal "yandexcloudkms" {
+     kms_key_id               = "abjn0c3psqufihncssam"
+     service_account_key_file = "/usr/vault/yc-kms/key.json"
+}
+```
+С HA конфигурацией не получилось, запускается процесс миграции на Autоunseal, сервер инициализируется автоматически, но по прежнему Sealed. Запустить ручной Unseal тоже не дает из-за настроенного autounseal.
+```shell
+$ kubectl exec -n vault vault-0 -- vault status
+Key                           Value
+---                           -----
+Recovery Seal Type            shamir
+Initialized                   true
+Sealed                        true
+Total Recovery Shares         1
+Threshold                     1
+Unseal Progress               0/1
+Unseal Nonce                  n/a
+Seal Migration in Progress    true
+Version                       1.14.1+yckms
+Build Date                    2023-08-01T20:32:02Z
+Storage Type                  raft
+HA Enabled                    true
+```
+Здесь пишут [https://github.com/hashicorp/vault/issues/6810](https://github.com/hashicorp/vault/issues/6810), что надо потушить другие сервера в кластере, и только после этого успешно завершится миграция первого.
+
+Деплою Vault в standalone конфигурации, теперь все получается:
+```shell
+$ kubectl exec -n vault vault-0 -- vault status
+Key                      Value
+---                      -----
+Recovery Seal Type       yandexcloudkms
+Initialized              false
+Sealed                   true
+Total Recovery Shares    0
+Threshold                0
+Unseal Progress          0/0
+Unseal Nonce             n/a
+Version                  1.14.1+yckms
+Build Date               2023-08-01T20:32:02Z
+Storage Type             file
+HA Enabled               false
+```
+Все равно Vault надо инициализировать руками, но ключ он берет с Yandex KMS:
+```shell
+$ kubectl exec -n vault vault-0 -- vault operator init
+Recovery Key 1: YRzp1d3o0RpzQn3o/FM/9aUMtR+n23hstz6pckURluAY
+Recovery Key 2: w5P6cx7dZdJRsoY0vFV5kRAjVZkgFhIWQ/+KVxVBQB6L
+Recovery Key 3: f10lneZFtZrazJpl15cYzUiToUkqgFP9bQs3XS0RGd3C
+Recovery Key 4: XfPA/nVK69BgoeKHJ0iU66gaFbXzHHNX2I5xfcJZa7J6
+Recovery Key 5: gFakg8sPlU5ZNTdLY2vZ6wxt7xYG5sF74wTaEjCc1Ylt
+
+Initial Root Token: hvs.8ZnAKJlSNdjWvGEmYyvNpNKb
+
+Success! Vault is initialized
+
+Recovery key initialized with 5 key shares and a key threshold of 3. Please
+securely distribute the key shares printed above.
+```
+
+Распечатал не Unseal, а Recovery ключи, значит все корректно прошло. Проверяем:
+```shell
+$ kubectl exec -n vault vault-0 -- vault status
+Key                      Value
+---                      -----
+Recovery Seal Type       shamir
+Initialized              true
+Sealed                   false
+Total Recovery Shares    5
+Threshold                3
+Version                  1.14.1+yckms
+Build Date               2023-08-01T20:32:02Z
+Storage Type             file
+Cluster Name             vault-cluster-7468bf0e
+Cluster ID               3efa28e3-5fbc-dfe1-f014-d5d2d649a53b
+HA Enabled               false
+```
+
+## Задание сo ⭐ (Настроить lease временных секретов для доступа к БД)
+
+Для примера настроим динамически изменяемые секреты для MySQL. Действуем по инструкции [https://developer.hashicorp.com/vault/docs/secrets/databases/mysql-maria](https://developer.hashicorp.com/vault/docs/secrets/databases/mysql-maria)
+
+Включаем движок database:  
+```shell
+$ vault secrets enable database
+Success! Enabled the database secrets engine at: database/
+```
+Деплоим MySQl здесь же в кластере:
+```shell
+$ helm install mysql oci://registry-1.docker.io/bitnamicharts/mysql
+Pulled: registry-1.docker.io/bitnamicharts/mysql:9.12.3
+Digest: sha256:d0c52a9e2b892a9385c263b1785c338e4fe8175ada662e0737df4b25d4bb1d82
+NAME: mysql
+LAST DEPLOYED: Sat Oct  7 02:49:23 2023
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+CHART NAME: mysql
+CHART VERSION: 9.12.3
+APP VERSION: 8.0.34
+```
+Конфигурируем плагин подключения к серверу MySQL:
+```shell
+$ vault write database/config/my-mysql-database \
+    plugin_name=mysql-database-plugin \
+    connection_url="{{username}}:{{password}}@tcp(mysql.default.svc.cluster.local:3306)/" \
+    allowed_roles="my-role" \
+    username="root" \
+    password="0RnSuOxqn4"
+Success! Data written to: database/config/my-mysql-database
+```
+Настраиваем роль:
+```shell
+$  vault write database/roles/my-role \
+    db_name=my-mysql-database \
+    creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT ON *.* TO '{{name}}'@'%';" \
+    default_ttl="1h" \
+    max_ttl="24h"
+Success! Data written to: database/roles/my-role
+```
+Генерируем временные credentials:
+```shell
+$ vault read database/creds/my-role
+Key                Value
+---                -----
+lease_id           database/creds/my-role/FT8Z3Tw6L2iTnOxOVJpp9vA4
+lease_duration     1h
+lease_renewable    true
+password           22R-GPXWVzYsAuvIxvvO
+username           v-root-my-role-WEELOmBg5RqUNgpHY
+```
+Подключаемся к MySQL под сгенерированными credentials:
+```shell
+mysql -h 127.0.0.1 -uv-root-my-role-WEELOmBg5RqUNgpHY -p"22R-GPXWVzYsAuvIxvvO"
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 460
+Server version: 8.0.34 Source distribution
+```
+Смотрим свои права:
+```shell
+mysql> SHOW GRANTS;
++---------------------------------------------------------------+
+| Grants for v-root-my-role-WEELOmBg5RqUNgpHY@%                 |
++---------------------------------------------------------------+
+| GRANT SELECT ON *.* TO `v-root-my-role-WEELOmBg5RqUNgpHY`@`%` |
++---------------------------------------------------------------+
+1 row in set (0.13 sec)
+```
+Меняем credentials:
+```shell
+$ vault read database/creds/my-role
+Key                Value
+---                -----
+lease_id           database/creds/my-role/FXlFiqAWHIi7WpFNEGsbQ43B
+lease_duration     1h
+lease_renewable    true
+password           v54yx-zLW-7lyDrg-dAw
+username           v-root-my-role-DmudG5PGnDEXGZ4it
+```
+Заходим под новыми credentials. Все работает, в базу пускает, пользователь изменился:
+```shell
+$ mysql -h 127.0.0.1 -uv-root-my-role-DmudG5PGnDEXGZ4it -p"v54yx-zLW-7lyDrg-dAw"
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 599
+Server version: 8.0.34 Source distribution
+
+mysql> SHOW GRANTS;
++---------------------------------------------------------------+
+| Grants for v-root-my-role-DmudG5PGnDEXGZ4it@%                 |
++---------------------------------------------------------------+
+| GRANT SELECT ON *.* TO `v-root-my-role-DmudG5PGnDEXGZ4it`@`%` |
++---------------------------------------------------------------+
+1 row in set (0.04 sec)
+```
+
 
 ### Удаление инфраструктуры
 
