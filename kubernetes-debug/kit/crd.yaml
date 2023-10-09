@@ -31,7 +31,7 @@ spec:
               properties:
                 serverNode:
                   type: string
-                slientNode:
+                clientNode:
                   type: string
               required:
               - serverNode
@@ -44,7 +44,7 @@ spec:
                   type: string
                 serverPod:
                   type: string
-                slientPod:
+                clientPod:
                   type: string
                 speedBitsPerSec:
                   type: number
