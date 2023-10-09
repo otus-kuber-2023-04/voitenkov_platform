@@ -1,7 +1,7 @@
 # Выполнено ДЗ № 13
 
  - [x] kubectl debug - не работает на Kubernetes v1.24, использовал Ephemeral Containers
- - [ ] iptables-tailer - не работает на Kubernetes v1.24, не нашел пока, чем заменить
+ - [x] iptables-tailer
  - [ ] Задание со ⭐ (Исправьте ошибку в нашей сетевой политике, чтобы Netperf снова начал работать)
  - [ ] Задание со ⭐ (Поправьте манифест DaemonSet из репозитория, чтобы в логах отображались имена Podов, а не их IP-адреса)
 
@@ -173,13 +173,34 @@ exit_group(0)                           = ?
 ### iptables-tailer
 
 Устанавливаю CRD. Этот проект прекратил свое развитие даже в 2018 г. Переписываю CRD с API v1beta1 на v1, деплою.
-Но **netperf-operator** сваливается с ошибкой:
+Запускаю тест (кластер был без Calico):
 ```shell
-goroutine 83 [running]:
-github.com/piontec/netperf-operator/vendor/k8s.io/apimachinery/pkg/util/runtime.HandleCrash(0x0, 0x0, 0x0) 
-/home/travis/gopath/src/github.com/piontec/netperf-operator/vendor/k8s.io/apimachinery/pkg/util/runtime/runtime.go:58 +0x107
-/home/travis/.gimme/versions/go1.10.1.linux.amd64/src/runtime/panic.go:502 +0x229 
+$ k describe netperf
+Name:         example
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+API Version:  app.example.com/v1alpha1
+Kind:         Netperf
+Metadata:
+  Creation Timestamp:  2023-10-09T20:35:49Z
+  Generation:          4
+  Resource Version:    14375
+  UID:                 0d492197-9c79-46a0-a3ad-9c2e0d565153
+Spec:
+  Client Node:
+  Server Node:
+Status:
+  Client Pod:          netperf-client-9c2e0d565153
+  Server Pod:          netperf-server-9c2e0d565153
+  Speed Bits Per Sec:  9872.22
+  Status:              Done
+Events:                <none>
 ```
+Однако с установленным Calico netperf-client не видит порт netperf-server, используемый для теста, но IP пингуются, сетевая политика еще не включена.
+Проверяю тогда на пинге. Включаю сетевую политику, вижу, что пинг блокируется
+Также установил kube-iptables-tailer. Выполнил кастомизацию согласно методичке, но в Ivents Kubernetes и в Ivents Netperf подов ничего не появилось.
+Так что как работать с сетевыми политиками понятно, как мерить производительность Netperf'ом тоже понятно. Как запустить тест Netperf при включенном Calico или добиться доставки логов kube-iptables-tailer непонятно.
 
 ### Удаление инфраструктуры
 
