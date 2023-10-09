@@ -1,7 +1,0 @@
-cloud_id     = "b1gt4ltqtr6mb2d8p4dk"
-folder_id    = "b1gop1k0tj79ebd4c9c9"
-project      = "otus-kuber"
-environment  = "dev"
-domain1      = "voytenkov.ru"
-subdomain1_1 = "k8s-dev"
-external_ip1 = "158.160.112.56"
