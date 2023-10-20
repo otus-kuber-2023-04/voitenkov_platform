@@ -1,4 +1,0 @@
-
-# enable falcosidekick deployment
-image:
-  tag: 2.24.0
