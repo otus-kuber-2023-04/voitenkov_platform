@@ -1,0 +1,100 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: frontend
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/frontend
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: adservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/adservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: cartservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/cartservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: checkoutservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/checkoutservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: currencyservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/currencyservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: emailservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/emailservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: loadgenerator
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/loadgenerator
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: paymentservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/paymentservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: productcatalogservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/productcatalogservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: recommendationservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/recommendationservice
+  interval: 1m
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: shippingservice
+  namespace: flux-system
+spec:
+  image: registry.gitlab.com/voitenkov/microservices-demo/shippingservice
+  interval: 1m
+...

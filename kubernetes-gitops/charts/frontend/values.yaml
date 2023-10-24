@@ -1,0 +1,6 @@
+image:
+  repository: registry.gitlab.com/voitenkov/microservices-demo/frontend
+  tag: latest
+ingress:
+  host: "*"
+# environment: develop

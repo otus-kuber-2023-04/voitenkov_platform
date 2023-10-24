@@ -1,0 +1,36 @@
+include:
+  - template: Terraform.latest.gitlab-ci.yml
+
+variables:
+  TF_STATE_NAME: default
+  TF_CACHE_KEY: default
+  TF_ROOT: "infrastructure/4-production"
+
+before_script:
+  - |
+    cat <<EOF >> ~/.terraformrc
+    provider_installation {
+      network_mirror {
+        url = "https://terraform-mirror.yandexcloud.net/"
+        include = ["registry.terraform.io/*/*"]
+      }
+      direct {
+        exclude = ["registry.terraform.io/*/*"]
+      }
+    }
+    EOF
+  - echo "$YC_IAM_KEY" > ~/key.json
+  - echo "$SSH_PUBLIC_KEY" > ~/id_rsa.pub
+
+deploy:
+  environment:
+    name: $TF_STATE_NAME
+    action: start
+    on_stop: destroy
+
+destroy:
+  extends: .terraform:destroy
+  environment:
+    name: $TF_STATE_NAME
+    action: stop    
+    

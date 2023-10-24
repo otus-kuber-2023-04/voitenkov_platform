@@ -1,0 +1,5 @@
+image:
+  repository: registry.gitlab.com/voitenkov/microservices-demo/loadgenerator
+  tag: latest
+ingress:
+  host: 158.160.108.188

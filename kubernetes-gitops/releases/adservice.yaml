@@ -1,0 +1,20 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: adservice
+  namespace: microservices-demo
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: ./infrastructure/deploy/charts/adservice
+      version: '0.5.x'
+      sourceRef:
+        kind: GitRepository
+        name: microservices-charts
+        namespace: flux-system
+      interval: 1m
+  values:
+    image:
+      repository: registry.gitlab.com/voitenkov/microservices-demo/adservice # {"$imagepolicy": "flux-system:adservice:name"}
+      tag: 0.0.195 # {"$imagepolicy": "flux-system:adservice:tag"}

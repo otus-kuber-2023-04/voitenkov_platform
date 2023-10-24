@@ -1,0 +1,20 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: productcatalogservice
+  namespace: microservices-demo
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: ./infrastructure/deploy/charts/productcatalogservice
+      version: '0.3.x'
+      sourceRef:
+        kind: GitRepository
+        name: microservices-charts
+        namespace: flux-system
+      interval: 1m
+  values:
+    image:
+      repository: registry.gitlab.com/voitenkov/microservices-demo/productcatalogservice # {"$imagepolicy": "flux-system:productcatalogservice:name"}
+      tag: 0.0.195 # {"$imagepolicy": "flux-system:productcatalogservice:tag"}

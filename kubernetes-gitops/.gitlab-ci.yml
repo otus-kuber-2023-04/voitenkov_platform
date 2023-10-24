@@ -1,0 +1,141 @@
+stages:
+   - modules
+
+variables:
+   ALPINE_TAG: "3.17.0"
+   DIND_TAG: "20.10.12-dind-rootless"
+   GOLANG_TAG: "1.17"
+   KANIKO_TAG: "v1.9.1-debug"
+   SEMGREP_TAG: "latest"
+   SONAR_TAG: "4.8.0"
+   APP_VERSION: 0.0.${CI_PIPELINE_IID}
+   
+infrastructure:
+   stage: modules
+   trigger:
+      include:
+         - local: "/infrastructure/.gitlab-ci/.4-production.yml"
+      strategy: depend
+   only:
+      changes:
+         - infrastructure/4-production/*
+
+prepare:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.prepare.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/.gitlab-ci/.prepare.yml
+
+adservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.adservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/adservice/**/*
+
+cartservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.cartservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/cartservice/**/*
+
+checkoutservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.checkoutservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/checkoutservice/**/*
+
+currencyservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.currencyservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/currencyservice/**/*
+
+emailservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.emailservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/emailservice/**/*
+
+frontend:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.frontend.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/frontend/**/*
+
+loadgenerator:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.loadgenerator.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/loadgenerator/**/*
+
+paymentservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.paymentservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/paymentservice/**/*
+
+productcatalogservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.productcatalogservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/productcatalogservice/**/*
+
+recommendationservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.recommendationservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/recommendationservice/**/*
+
+shippingservice:
+   stage: modules
+   trigger:
+      include:
+         - local: "/application/.gitlab-ci/.shippingservice.yml"
+      strategy: depend
+   only:
+      changes:
+         - application/src/shippingservice/**/*
