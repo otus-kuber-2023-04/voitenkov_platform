@@ -1,1 +1,0 @@
-This directory will contain an index.html file rendered by the Vault-agent
