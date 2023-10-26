@@ -31,7 +31,7 @@
 
 Подробнее по инфраструктурной части см. https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-templating/infrastructure/README.md
 
-## Решение Д/З № 9
+## Решение Д/З № 8
 
 ### Устанавливаем готовые Helm charts. Будем работать со следующими сервисами:
 
