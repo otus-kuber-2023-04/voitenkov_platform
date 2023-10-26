@@ -1,4 +1,4 @@
-# Выполнено ДЗ № 13
+# Выполнено ДЗ № 12 - Диагностика и отладка кластера и приложений в нем
 
  - [x] kubectl debug - не работает на Kubernetes v1.24, использовал Ephemeral Containers
  - [x] iptables-tailer
@@ -40,7 +40,7 @@
 
 Подробнее по инфраструктурной части см. https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-templating/infrastructure/README.md
 
-## Решение Д/З № 13
+## Решение Д/З № 12
 
 ### Kubectl-debug
 
