@@ -20,4 +20,4 @@
 [ДЗ №12 - Диагностика и отладка кластера и приложений в нем](kubernetes-debug/README.md)  
 [ДЗ №13 - CSI. Обзор подсистем хранения данных в Kubernetes](kubernetes-storage/README.md)  
 [ДЗ №14 - Подходы к развертыванию и обновлению production-grade кластера](kubernetes-production-clusters/README.md)  
-[Курсовой проект](https://gitlab.com/voitenkov/sock-shop/-/tree/main/)  
+[Проектная работа](https://gitlab.com/voitenkov/sock-shop/-/tree/main/)  
