@@ -1,0 +1,8 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: storage-pvc-snapshot
+spec:
+  volumeSnapshotClassName: hostpath-snapshot-class
+  source:
+    persistentVolumeClaimName: storage-pvc
