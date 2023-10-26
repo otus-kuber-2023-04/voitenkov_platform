@@ -40,7 +40,7 @@
 
 Подробнее по инфраструктурной части см. https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-templating/infrastructure/README.md
 
-## Решение Д/З № 12
+## Решение Д/З № 11
 
 ### Установка Hashicorp Vault + Consul HA 
 
