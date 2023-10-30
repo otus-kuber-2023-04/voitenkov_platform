@@ -1,19 +1,23 @@
 # Инфраструктурная платформа на основе Kubernetes
 
-## Занятия
+Репозиторий создан в ходе прохождения курса на обучающей платформе OTUS.  
+Страница курса: https://otus.ru/lessons/infrastrukturnaya-platforma-na-osnove-kubernetes/
 
-## 1. Инфраструктурная платформа для разработки и эксплуатации цифровых продуктов (27.04.2023)
-
-## 2. Знакомство с Kubernetes, основные понятия и архитектура (05.05.2023)
-### Задание: 
-- Разберитесь почему все pod в namespace kube-system восстановились после удаления. Укажите причину в описании PR. Hint: core-dns и, например, kube-apiserver, имеют различия в механизме запуска и восстанавливаются по разным причинам. 
-- ⭐ Выясните причину, по которой pod frontend находится в статусе **Error**
-
-### Полезные ссылки
-
-- [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/) 
-- [minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/)
-- [StaticPods](https://kubernetes.io/docs/tasks/configure-pod-container/static-pod/)
-- [Pods Overview](https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/)
-- [Kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
-- [Описание выполненного ДЗ](kubernetes-intro/README.md)
+## Содержание
+<a name="top"></a>  
+[Подготовка инфраструктуры](infrastructure/README.md)  
+[ДЗ № 1 - Знакомство с Kubernetes, основные понятия и архитектура](kubernetes-intro/README.md)  
+[ДЗ № 2 - Механика запуска и взаимодействия контейнеров в Kubernetes](kubernetes-controllers/README.md)  
+[ДЗ № 3 - Сетевая подсистема Kubernetes](kubernetes-networks/README.md)  
+[ДЗ № 4 - Хранение данных в Kubernetes: Volumes, Storages, Statefull-приложения](kubernetes-volumes/README.md)  
+[ДЗ № 5 - Безопасность и управление доступом](kubernetes-security/README.md)  
+[ДЗ № 6 - Мониторинг компонентов кластера и приложений, работающих в нем](kubernetes-monitoring/README.md)  
+[ДЗ № 7 - Custom Resource Definitions. Operators](kubernetes-operators/README.md)  
+[ДЗ № 8 - Шаблонизация манифестов. Helm и его аналоги (Jsonnet, Kustomize)](kubernetes-templating/README.md)  
+[ДЗ № 9 - Сервисы централизованного логирования для компонентов Kubernetes и приложений](kubernetes-logging/README.md)  
+[ДЗ №10 - GitOps и инструменты поставки](kubernetes-gitops/README.md)  
+[ДЗ №11 - Хранилище секретов для приложений. Vault ](kubernetes-vault/README.md)  
+[ДЗ №12 - Диагностика и отладка кластера и приложений в нем](kubernetes-debug/README.md)  
+[ДЗ №13 - CSI. Обзор подсистем хранения данных в Kubernetes](kubernetes-storage/README.md)  
+[ДЗ №14 - Подходы к развертыванию и обновлению production-grade кластера](kubernetes-production-clusters/README.md)  
+[Проектная работа](https://gitlab.com/voitenkov/sock-shop/-/tree/main/)  

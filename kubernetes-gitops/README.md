@@ -1,4 +1,4 @@
-# Выполнено ДЗ № 11
+# Выполнено ДЗ № 10 - GitOps и инструменты поставки
 
  - [x] Основное ДЗ
  - [x] Задание со ⭐ (Подготовка Kubernetes кластера)
@@ -45,7 +45,7 @@
 
 Подробнее по инфраструктурной части см. https://github.com/otus-kuber-2023-04/voitenkov_platform/blob/kubernetes-templating/infrastructure/README.md
 
-## Решение Д/З № 11
+## Решение Д/З № 10
 
 ### Подготовка Kubernetes кластера | Задание со ⭐
 
